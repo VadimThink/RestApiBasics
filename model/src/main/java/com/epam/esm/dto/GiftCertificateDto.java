@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,16 +18,21 @@ public class GiftCertificateDto {
     private String name;
     @Size(min = 1, max = 100)
     private String description;
-    private String price;
+    @Min(1)
+    private BigDecimal price;
     @Min(1)
     private int duration;
-    private String createDate;
-    private String lastUpdateDate;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX")
+    private ZonedDateTime createDate;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX")
+    private ZonedDateTime lastUpdateDate;
     private List<TagDto> tagList;
 
     public GiftCertificateDto(long id, @Size(min = 1, max = 50)
-            String name, @Size(min = 1, max = 100) String description, String price,
-                              @Min(1) int duration, String createDate, String lastUpdateDate) {
+            String name, @Size(min = 1, max = 100) String description, BigDecimal price,
+                              @Min(1) int duration, ZonedDateTime createDate, ZonedDateTime lastUpdateDate) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -36,8 +43,8 @@ public class GiftCertificateDto {
     }
 
     public GiftCertificateDto(long id, @Size(min = 1, max = 50) String name, @Size(min = 1, max = 100) String description,
-                              String price, @Min(1) int duration, String createDate,
-                              String lastUpdateDate, List<TagDto> tagList) {
+                              @Min(1)BigDecimal price, @Min(1) int duration, ZonedDateTime createDate,
+                              ZonedDateTime lastUpdateDate, List<TagDto> tagList) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -45,6 +52,17 @@ public class GiftCertificateDto {
         this.duration = duration;
         this.createDate = createDate;
         this.lastUpdateDate = lastUpdateDate;
+        this.tagList = tagList;
+    }
+
+    public GiftCertificateDto(long id, @Size(min = 1, max = 50) String name,
+                              @Size(min = 1, max = 100) String description, @Min(1) BigDecimal price,
+                              @Min(1) int duration, List<TagDto> tagList) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
         this.tagList = tagList;
     }
 
@@ -75,11 +93,11 @@ public class GiftCertificateDto {
         this.description = description;
     }
 
-    public String getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
@@ -91,19 +109,19 @@ public class GiftCertificateDto {
         this.duration = duration;
     }
 
-    public String getCreateDate() {
+    public ZonedDateTime getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(String createDate) {
+    public void setCreateDate(ZonedDateTime createDate) {
         this.createDate = createDate;
     }
 
-    public String getLastUpdateDate() {
+    public ZonedDateTime getLastUpdateDate() {
         return lastUpdateDate;
     }
 
-    public void setLastUpdateDate(String lastUpdateDate) {
+    public void setLastUpdateDate(ZonedDateTime lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
 

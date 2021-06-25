@@ -2,10 +2,12 @@ package com.epam.esm.dto;
 
 import org.springframework.stereotype.Component;
 
-@Component
+import javax.validation.constraints.Size;
+
 public class TagDto {
 
     private long id;
+    @Size(min = 1, max = 50)
     private String name;
 
     public TagDto(long id, String name) {

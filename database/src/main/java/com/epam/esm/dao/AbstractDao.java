@@ -1,5 +1,6 @@
 package com.epam.esm.dao;
 
+import com.epam.esm.entity.GiftCertificate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -25,13 +26,8 @@ public abstract class AbstractDao<T> {
         deleteByIdQuery = "DELETE FROM " + tableName + " WHERE id=?";
     }
 
-    public List<T> getAll() {
-        return jdbcTemplate.query(getAllQuery, rowMapper);
-    }
-
     public Optional<T> findById(long id) {
-        return jdbcTemplate.query(findByIdQuery, rowMapper, id)
-                .stream().findAny();
+        return jdbcTemplate.query(findByIdQuery, rowMapper, id).stream().findAny();
     }
 
     public void deleteById(long id) {
@@ -41,5 +37,9 @@ public abstract class AbstractDao<T> {
     public Optional<T> findByColumn(String columnName, String value) {
         String query = String.format(findByColumnQuery, columnName);
         return jdbcTemplate.query(query, rowMapper, value).stream().findAny();
+    }
+
+    public List<T> getAll() {
+        return jdbcTemplate.query(getAllQuery, rowMapper);
     }
 }

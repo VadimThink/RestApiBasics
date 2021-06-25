@@ -8,11 +8,11 @@ import java.util.List;
 
 public interface GiftCertificateService {
 
-    long create(GiftCertificateDto giftCertificateDto) throws DuplicateException;
+    GiftCertificateDto create(GiftCertificateDto giftCertificateDto) throws DuplicateException, NoSuchEntityException;
     List<GiftCertificateDto> getAll();
     GiftCertificateDto getById(long id) throws NoSuchEntityException;
     GiftCertificateDto updateById(long id, GiftCertificateDto giftCertificateDto) throws NoSuchEntityException;
-    void deleteById(long id);
+    void deleteById(long id) throws NoSuchEntityException;
     List<GiftCertificateDto> getBySearchParams(String tagName, String partName,
-                                               List<String> sortColumns, List<String> orderTypes);
+                                               List<String> sortColumns, List<String> orderTypes) throws NoSuchEntityException;
 }

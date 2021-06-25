@@ -8,6 +8,7 @@ import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,13 +21,13 @@ public class GiftCertificate {
     private BigDecimal price;
     @Min(1)
     private int duration;
-    LocalDate createDate;
-    LocalDate lastUpdateDate;
+    private ZonedDateTime createDate;
+    private ZonedDateTime lastUpdateDate;
     private List<Tag> tagList;
 
     public GiftCertificate(long id, @Size(min = 1, max = 50) String name, @Size(min = 1, max = 100)
             String description, BigDecimal price, @Min(1) int duration,
-                           LocalDate createDate, LocalDate lastUpdateDate) {
+                           ZonedDateTime createDate, ZonedDateTime lastUpdateDate) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -81,20 +82,28 @@ public class GiftCertificate {
         this.duration = duration;
     }
 
-    public LocalDate getCreateDate() {
+    public ZonedDateTime getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(LocalDate createDate) {
+    public void setCreateDate(ZonedDateTime createDate) {
         this.createDate = createDate;
     }
 
-    public LocalDate getLastUpdateDate() {
+    public void setCreateDate(String createDate){
+        this.createDate = ZonedDateTime.parse(createDate, DateTimeFormatter.ISO_DATE_TIME);
+    }
+
+    public ZonedDateTime getLastUpdateDate() {
         return lastUpdateDate;
     }
 
-    public void setLastUpdateDate(LocalDate lastUpdateDate) {
+    public void setLastUpdateDate(ZonedDateTime lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(String lastUpdateDate){
+        this.lastUpdateDate = ZonedDateTime.parse(lastUpdateDate, DateTimeFormatter.ISO_DATE_TIME);
     }
 
     public List<Tag> getTagList() {

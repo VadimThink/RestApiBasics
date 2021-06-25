@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
+import static com.epam.esm.constant.RequestParams.*;
+
 @RestController
-@RequestMapping("/gift_certificate")
+@RequestMapping("/gift_certificates")
 public class GiftCertificateController {
     private final GiftCertificateService giftCertificateService;
 
@@ -23,9 +25,9 @@ public class GiftCertificateController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody GiftCertificateDto giftCertificateDto,
-                       HttpServletResponse response) throws DuplicateException {
-        long id = giftCertificateService.create(giftCertificateDto);
+    public GiftCertificateDto create(@RequestBody GiftCertificateDto giftCertificateDto,
+                       HttpServletResponse response) throws DuplicateException, NoSuchEntityException {
+        return giftCertificateService.create(giftCertificateDto);
     }
 
     @GetMapping("/{id}")
@@ -34,7 +36,7 @@ public class GiftCertificateController {
         return giftCertificateService.getById(id);
     }
 
-    @PatchMapping("/{id}")
+    @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public GiftCertificateDto updateById(@PathVariable("id") long id,
                                          @RequestBody GiftCertificateDto giftCertificateDto) throws NoSuchEntityException {
@@ -43,17 +45,17 @@ public class GiftCertificateController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(@PathVariable("id") long id) {
+    public void deleteById(@PathVariable("id") long id) throws NoSuchEntityException {
         giftCertificateService.deleteById(id);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<GiftCertificateDto> getAllByTags(
-            @RequestParam(name = "tag_name", required = false) String tagName,
-            @RequestParam(name = "part_name", required = false) String partName,
-            @RequestParam(name = "sort", required = false) List<String> sortColumns,
-            @RequestParam(name = "order", required = false) List<String> orderTypes) {
+            @RequestParam(name = TAG_NAME, required = false) String tagName,
+            @RequestParam(name = PART_NAME, required = false) String partName,
+            @RequestParam(name = SORT, required = false) List<String> sortColumns,
+            @RequestParam(name = ORDER, required = false) List<String> orderTypes) throws NoSuchEntityException {
         return giftCertificateService.getBySearchParams(tagName, partName, sortColumns, orderTypes);
     }
 }
