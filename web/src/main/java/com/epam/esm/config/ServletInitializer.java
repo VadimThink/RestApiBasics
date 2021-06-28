@@ -9,21 +9,6 @@ import javax.servlet.ServletRegistration;
 
 public class ServletInitializer implements WebApplicationInitializer {
 
-    /*@Override
-    protected Class<?>[] getRootConfigClasses() {
-        return null;
-    }
-
-    @Override
-    protected Class<?>[] getServletConfigClasses() {
-        return new Class[] {ServletConfig.class};
-    }
-
-    @Override
-    protected String[] getServletMappings() {
-        return new String[] {"/"};
-    }
-    */
     @Override
     public void onStartup(ServletContext servletContext) {
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
@@ -37,13 +22,5 @@ public class ServletInitializer implements WebApplicationInitializer {
         dispatcher.setInitParameter("throwExceptionIfNoHandlerFound", "true");
         dispatcher.addMapping("/*");
     }
-
-    /*@Override
-    protected DispatcherServlet createDispatcherServlet(WebApplicationContext servletAppContext) {
-        DispatcherServlet dispatcherServlet = (DispatcherServlet) super.createDispatcherServlet(servletAppContext);
-        dispatcherServlet.setThrowExceptionIfNoHandlerFound(true);
-        return dispatcherServlet;
-    }*/
-
 
 }

@@ -11,42 +11,34 @@ import org.springframework.stereotype.Component;
 import com.epam.esm.query.QueryBuildHelper;
 
 import java.math.BigDecimal;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static com.epam.esm.dao.SqlRequest.*;
+import static com.epam.esm.dao.constant.ColumnNames.*;
 
 @Component
 public class GiftCertificateDaoImpl extends AbstractDao<GiftCertificate> implements GiftCertificateDao {
     private static final String TABLE_NAME = "gift_certificate";
-    private static final String ID_COLUMN_LABEL = "id";
-    private static final String NAME_COLUMN_LABEL = "name";
-    private static final String DESCRIPTION_COLUMN_LABEL = "description";
-    private static final String PRICE_COLUMN_LABEL = "price";
-    private static final String DURATION_COLUMN_LABEL = "duration";
-    private static final String CREATE_DATE_COLUMN_LABEL = "create_date";
-    private static final String LAST_UPDATE_DATE_COLUMN_LABEL = "last_update_date";
-    private static final String TAG_ID_COLUMN_LABEL = "tag_id";
-    private static final String CERTIFICATE_ID = "certificate_id";
+
     private static final RowMapper<GiftCertificate> ROW_MAPPER =
             (rs, rowNum) -> new GiftCertificate(
                     rs.getLong(ID_COLUMN_LABEL),
                     rs.getString(NAME_COLUMN_LABEL),
                     rs.getString(DESCRIPTION_COLUMN_LABEL),
                     rs.getBigDecimal(PRICE_COLUMN_LABEL),
-                    rs.getInt(DURATION_COLUMN_LABEL),
-                    ZonedDateTime.parse(rs.getString(CREATE_DATE_COLUMN_LABEL)),
-                    ZonedDateTime.parse(rs.getString(LAST_UPDATE_DATE_COLUMN_LABEL)));
+                    rs.getInt(DURATION_COLUMN_LABEL));
+                    //ZonedDateTime.parse(rs.getString(CREATE_DATE_COLUMN_LABEL)),
+                    //ZonedDateTime.parse(rs.getString(LAST_UPDATE_DATE_COLUMN_LABEL)));
 
     private final JdbcTemplate jdbcTemplate;
     private final QueryBuildHelper queryBuildHelper;
 
     @Autowired
     public GiftCertificateDaoImpl(JdbcTemplate jdbcTemplate, QueryBuildHelper queryBuildHelper) {
-        super(ROW_MAPPER, TABLE_NAME, jdbcTemplate);
+        super(ROW_MAPPER, TABLE_NAME, jdbcTemplate, CERTIFICATE_ID);
         this.jdbcTemplate = jdbcTemplate;
         this.queryBuildHelper = queryBuildHelper;
     }
@@ -128,12 +120,17 @@ public class GiftCertificateDaoImpl extends AbstractDao<GiftCertificate> impleme
     }
 
     @Override
-    public void updateById(long id, GiftCertificate giftCertificate) {
-        Map<String, Object> giftCertificateUpdateInfo = findUpdateInfo(giftCertificate);
+    public void updateById(long id, GiftCertificate giftCertificate, boolean isReplace) {
+        Map<String, Object> giftCertificateUpdateInfo;
+        if(isReplace){
+            giftCertificateUpdateInfo = findReplaceInfo(giftCertificate);
+        }else {
+            giftCertificateUpdateInfo = findUpdateInfo(giftCertificate);
+        }
         if (!giftCertificateUpdateInfo.isEmpty()) {
             StringBuilder updateQueryBuilder = new StringBuilder();
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
-            String lastUpdateDate = ZonedDateTime.now(ZoneId.systemDefault()).format(dateTimeFormatter);
+            String lastUpdateDate = ZonedDateTime.now(ZoneOffset.UTC).toString();
             updateQueryBuilder.append("UPDATE gift_certificate SET last_update_date=' ");
             updateQueryBuilder.append(lastUpdateDate);
             updateQueryBuilder.append("',");
@@ -166,5 +163,18 @@ public class GiftCertificateDaoImpl extends AbstractDao<GiftCertificate> impleme
             updateInfo.put(DURATION_COLUMN_LABEL, duration);
         }
         return updateInfo;
+    }
+
+    private Map<String, Object> findReplaceInfo(GiftCertificate giftCertificate){
+        Map<String, Object> replaceInfo = new HashMap<>();
+        String name = giftCertificate.getName();
+        replaceInfo.put(NAME_COLUMN_LABEL, name);
+        String description = giftCertificate.getDescription();
+        replaceInfo.put(DESCRIPTION_COLUMN_LABEL, description);
+        BigDecimal price = giftCertificate.getPrice();
+        replaceInfo.put(PRICE_COLUMN_LABEL, price);
+        int duration = giftCertificate.getDuration();
+        replaceInfo.put(DURATION_COLUMN_LABEL, duration);
+        return replaceInfo;
     }
 }

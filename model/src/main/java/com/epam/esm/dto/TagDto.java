@@ -1,13 +1,13 @@
 package com.epam.esm.dto;
 
-import org.springframework.stereotype.Component;
-
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 public class TagDto {
 
     private long id;
-    @Size(min = 1, max = 50)
+    @Size(min = 1, max = 50, message = "Name length should be >= 1, and <= 50")
+    @NotEmpty(message = "Name should not be empty")
     private String name;
 
     public TagDto(long id, String name) {

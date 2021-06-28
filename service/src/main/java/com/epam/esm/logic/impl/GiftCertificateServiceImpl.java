@@ -10,11 +10,11 @@ import com.epam.esm.exception.NoSuchEntityException;
 import com.epam.esm.logic.GiftCertificateService;
 import com.epam.esm.mapper.GiftCertificateMapper;
 import com.epam.esm.query.SortingParameters;
+import com.epam.esm.query.SortingParametersValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -66,17 +66,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public List<GiftCertificateDto> getAll() {
-        return null;
-    }
-
-    @Override
+    @Transactional
     public GiftCertificateDto getById(long id) throws NoSuchEntityException {
         Optional<GiftCertificate> giftCertificateOptional = giftCertificateDao.findById(id);
         if (giftCertificateOptional.isEmpty()) {
             throw new NoSuchEntityException("Certificate not found");
         } else {
-            return mapper.mapToDto(giftCertificateOptional.get());
+            GiftCertificate giftCertificate = giftCertificateOptional.get();
+            addTagsInGiftCertificate(giftCertificate);
+            return mapper.mapToDto(giftCertificate);
         }
     }
 
@@ -87,18 +85,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         if (giftCertificate != null) {
             if (giftCertificateDao.findById(id).isEmpty()) {
                 throw new NoSuchEntityException("Certificate not found");
-            } else {
-                giftCertificateDao.updateById(id, giftCertificate);
+            }
+            giftCertificateDao.updateById(id, giftCertificate, false);
+            List<Tag> tags = giftCertificate.getTagList();
+            if (tags != null) {
+                updateCertificateTags(tags, id);
             }
         }
-        List<Tag> tags = null;
-        if (giftCertificate != null) {
-            tags = giftCertificate.getTagList();
-        }
-        if (tags != null) {
-            updateCertificateTags(tags, id);
-        }
-
         GiftCertificate newGiftCertificate = giftCertificateDao.findById(id).orElse(new GiftCertificate());
         return mapper.mapToDto(newGiftCertificate);
     }
@@ -111,6 +104,43 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             long tagId = fullTag.getId();
             if (!giftCertificateDao.getTagIdsByCertificateId(certificateId).contains(tagId)) {
                 giftCertificateDao.createCertificateTagReference(certificateId, tagId);
+            }
+        }
+    }
+
+    @Override
+    public GiftCertificateDto replaceById(long id, GiftCertificateDto giftCertificateDto) throws NoSuchEntityException {
+        GiftCertificate giftCertificate = mapper.mapToEntity(giftCertificateDto);
+        if (giftCertificate != null){
+            if (giftCertificateDao.findById(id).isEmpty()){
+                throw new NoSuchEntityException("Certificate not found");
+            }
+            giftCertificateDao.updateById(id, giftCertificate, true);
+            List<Tag> tags = giftCertificate.getTagList();
+            if (tags != null){
+                replaceCertificateTags(tags, id);
+            }
+        }
+        GiftCertificate newGiftCertificate = giftCertificateDao.findById(id).orElse(new GiftCertificate());
+        return mapper.mapToDto(newGiftCertificate);
+    }
+
+    private void replaceCertificateTags(List<Tag> tags, long certificateId){
+        List<Long> addedTagIds = new ArrayList<>();
+        for (Tag tag : tags) {
+            String tagName = tag.getName();
+            Optional<Tag> tagOptional = tagDao.findByName(tagName);
+            Tag fullTag = tagOptional.orElseGet(() -> createCertificateTag(tag));
+            long tagId = fullTag.getId();
+            addedTagIds.add(tagId);
+            if (!giftCertificateDao.getTagIdsByCertificateId(certificateId).contains(tagId)) {
+                giftCertificateDao.createCertificateTagReference(certificateId, tagId);
+            }
+        }
+        List<Long> allCertificateTagIdsList = giftCertificateDao.getTagIdsByCertificateId(certificateId);
+        for (long curTagId : allCertificateTagIdsList){
+            if(!addedTagIds.contains(curTagId)){
+                tagDao.deleteById(curTagId);
             }
         }
     }
@@ -134,6 +164,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         boolean isSortExist = sortColumns != null;
         if (isSortExist) {
             SortingParameters sortParameters = new SortingParameters(sortColumns, orderTypes);
+            SortingParametersValidator.validateParams(sortParameters);
             if (isFilterExist(tagName, partName)) {
                 giftCertificates = getCertificatesWithSortingAndFiltering(tagName, partName, sortParameters);
             } else {
@@ -145,9 +176,20 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             giftCertificates = giftCertificateDao.getAll();
         }
         for (GiftCertificate giftCertificate : giftCertificates) {
+            addTagsInGiftCertificate(giftCertificate);
             giftCertificateDtoList.add(mapper.mapToDto(giftCertificate));
         }
         return giftCertificateDtoList;
+    }
+
+    private void addTagsInGiftCertificate(GiftCertificate giftCertificate){
+        List<Tag> tagList = new ArrayList<>();
+        List<Long> tagIds = giftCertificateDao.getTagIdsByCertificateId(giftCertificate.getId());
+        for (long tagId: tagIds) {
+            Optional<Tag> tagOptional = tagDao.findById(tagId);
+            tagOptional.ifPresent(tagList::add);
+        }
+        giftCertificate.setTagList(tagList);
     }
 
     private boolean isFilterExist(String tagName, String partInfo) {

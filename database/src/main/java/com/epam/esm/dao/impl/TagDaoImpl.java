@@ -17,13 +17,16 @@ public class TagDaoImpl extends AbstractDao<Tag> implements TagDao {
     public static final String SQL_CREATE_TAG= "INSERT INTO tag(name) VALUES (?)";
 
     private static final String TABLE_NAME = "tag";
+    private static final String NAME_COLUMN_LABEL = "name";
+    private static final String ID_COLUMN_LABEL = "id";
+    private static final String TAG_ID = "tag_id";
     private static final RowMapper<Tag> ROW_MAPPER = new BeanPropertyRowMapper<>(Tag.class);
     private final JdbcTemplate jdbcTemplate;
 
 
     @Autowired
     public TagDaoImpl(JdbcTemplate jdbcTemplate) {
-        super(ROW_MAPPER, TABLE_NAME, jdbcTemplate);
+        super(ROW_MAPPER, TABLE_NAME, jdbcTemplate, TAG_ID);
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -33,7 +36,7 @@ public class TagDaoImpl extends AbstractDao<Tag> implements TagDao {
     }
 
     public Optional<Tag> findByName(String name) {
-        return findByColumn("name", name);
+        return findByColumn(NAME_COLUMN_LABEL, name);
     }
 
 

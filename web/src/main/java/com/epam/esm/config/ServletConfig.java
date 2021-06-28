@@ -31,11 +31,6 @@ public class ServletConfig implements WebMvcConfigurer {
         converters.add(jacksonConverter);
     }
 
-    @Override
-    public void addFormatters(FormatterRegistry registry) {
-
-    }
-
     @Bean
     public ResourceBundleMessageSource getResourceBundleMessageSource() {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
