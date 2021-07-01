@@ -1,6 +1,7 @@
 package com.epam.esm.logic;
 
 import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.dto.UpdateGiftCertificateDto;
 import com.epam.esm.exception.DuplicateException;
 import com.epam.esm.exception.NoSuchEntityException;
 
@@ -28,7 +29,7 @@ public interface GiftCertificateService {
      * @return the by id
      * @throws NoSuchEntityException the no such entity exception
      */
-    GiftCertificateDto getById(long id) throws NoSuchEntityException;
+    GiftCertificateDto findById(long id) throws NoSuchEntityException;
 
     /**
      * Update by id gift certificate dto.
@@ -38,7 +39,7 @@ public interface GiftCertificateService {
      * @return the gift certificate dto
      * @throws NoSuchEntityException the no such entity exception
      */
-    GiftCertificateDto updateById(long id, GiftCertificateDto giftCertificateDto) throws NoSuchEntityException;
+    GiftCertificateDto updateById(long id, UpdateGiftCertificateDto giftCertificateDto) throws NoSuchEntityException;
 
     /**
      * Replace by id gift certificate dto.
@@ -48,7 +49,7 @@ public interface GiftCertificateService {
      * @return the gift certificate dto
      * @throws NoSuchEntityException the no such entity exception
      */
-    GiftCertificateDto replaceById(long id, GiftCertificateDto giftCertificateDto) throws  NoSuchEntityException;
+    GiftCertificateDto replaceById(long id, GiftCertificateDto giftCertificateDto) throws NoSuchEntityException;
 
     /**
      * Delete by id.
@@ -68,6 +69,6 @@ public interface GiftCertificateService {
      * @return the by search params
      * @throws NoSuchEntityException the no such entity exception
      */
-    List<GiftCertificateDto> getBySearchParams(String tagName, String partName,
-                                               List<String> sortColumns, List<String> orderTypes) throws NoSuchEntityException;
+    List<GiftCertificateDto> findBySearchParams(String tagName, String partName,
+                                                List<String> sortColumns, List<String> orderTypes) throws NoSuchEntityException;
 }

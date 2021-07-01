@@ -1,17 +1,18 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.dto.UpdateGiftCertificateDto;
 import com.epam.esm.exception.DuplicateException;
 import com.epam.esm.exception.NoSuchEntityException;
 import com.epam.esm.exception.ValidationExceptionChecker;
 import com.epam.esm.logic.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 import java.util.List;
 
 import static com.epam.esm.constant.RequestParams.*;
@@ -20,6 +21,7 @@ import static com.epam.esm.constant.RequestParams.*;
  * The type Gift certificate controller.
  */
 @RestController
+@Profile("prod")
 @RequestMapping("/gift_certificates")
 public class GiftCertificateController {
     private final GiftCertificateService giftCertificateService;
@@ -61,7 +63,8 @@ public class GiftCertificateController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public GiftCertificateDto getById(@PathVariable("id") long id) throws NoSuchEntityException {
-        return giftCertificateService.getById(id);
+        GiftCertificateDto result = giftCertificateService.findById(id);
+        return result;
     }
 
     /**
@@ -76,11 +79,9 @@ public class GiftCertificateController {
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public GiftCertificateDto updateById(@PathVariable("id") long id,
-                                         @RequestBody @Valid GiftCertificateDto giftCertificateDto,
+                                         @RequestBody @Valid UpdateGiftCertificateDto giftCertificateDto,
                                          BindingResult bindingResult) throws NoSuchEntityException {
-        if (bindingResult.hasErrors()){
-            throw new ValidationException(bindingResult.getObjectName());
-        }
+        ValidationExceptionChecker.checkDtoValidation(bindingResult);
         return giftCertificateService.updateById(id, giftCertificateDto);
     }
 
@@ -96,11 +97,9 @@ public class GiftCertificateController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public GiftCertificateDto replaceById(@PathVariable("id") long id,
-                                         @RequestBody @Valid GiftCertificateDto giftCertificateDto,
+                                          @RequestBody @Valid GiftCertificateDto giftCertificateDto,
                                           BindingResult bindingResult) throws NoSuchEntityException {
-        if (bindingResult.hasErrors()){
-            throw new ValidationException(bindingResult.getObjectName());
-        }
+        ValidationExceptionChecker.checkDtoValidation(bindingResult);
         return giftCertificateService.replaceById(id, giftCertificateDto);
     }
 
@@ -133,6 +132,6 @@ public class GiftCertificateController {
             @RequestParam(name = PART_NAME, required = false) String partName,
             @RequestParam(name = SORT, required = false) List<String> sortColumns,
             @RequestParam(name = ORDER, required = false) List<String> orderTypes) throws NoSuchEntityException {
-        return giftCertificateService.getBySearchParams(tagName, partName, sortColumns, orderTypes);
+        return giftCertificateService.findBySearchParams(tagName, partName, sortColumns, orderTypes);
     }
 }

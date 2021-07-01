@@ -29,7 +29,7 @@ public class TagServiceImpl implements TagService {
         String tagName = tagDto.getName();
         boolean isTagExist = tagDao.findByName(tagName).isPresent();
         if (isTagExist) {
-            throw new DuplicateException("Tag exist");
+            throw new DuplicateException("tag.exist");
         }
         Tag tag = mapper.mapToEntity(tagDto);
         tagDao.create(tag);
@@ -46,7 +46,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public TagDto getById(long id) throws NoSuchEntityException {
         Optional<Tag> optionalTag = tagDao.findById(id);
-        Tag tag = optionalTag.orElseThrow(() -> new NoSuchEntityException("Tag not found"));
+        Tag tag = optionalTag.orElseThrow(() -> new NoSuchEntityException("tag.not.found"));
         return mapper.mapToDto(tag);
     }
 

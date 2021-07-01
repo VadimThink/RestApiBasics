@@ -13,14 +13,14 @@ public class SortingParametersValidator {
                     PRICE_COLUMN_LABEL, DURATION_COLUMN_LABEL, CREATE_DATE_COLUMN_LABEL, LAST_UPDATE_DATE_COLUMN_LABEL));
     private final static List<String> availableOrderTypes = new ArrayList<>(Arrays.asList("ASC", "DESC"));
 
-    public static void validateParams(SortingParameters sortingParameters){
-        for (String columnName: sortingParameters.getSortColumns()) {
-            if(!availableColumns.contains(columnName)){
+    public static void validateParams(SortingParameters sortingParameters) {
+        for (String columnName : sortingParameters.getSortColumns()) {
+            if (!availableColumns.contains(columnName)) {
                 throw new ValidationException("Not available column name: " + columnName);
             }
         }
-        for (String orderType: sortingParameters.getOrderTypes()) {
-            if(!availableOrderTypes.contains(orderType)){
+        for (String orderType : sortingParameters.getOrderTypes()) {
+            if (!availableOrderTypes.contains(orderType)) {
                 throw new ValidationException("Not available order type: " + orderType);
             }
         }

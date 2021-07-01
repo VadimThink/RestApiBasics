@@ -9,12 +9,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Optional;
 
 @Component
 public class TagDaoImpl extends AbstractDao<Tag> implements TagDao {
-    public static final String SQL_CREATE_TAG= "INSERT INTO tag(name) VALUES (?)";
+    public static final String SQL_CREATE_TAG = "INSERT INTO tag(name) VALUES (?)";
 
     private static final String TABLE_NAME = "tag";
     private static final String NAME_COLUMN_LABEL = "name";

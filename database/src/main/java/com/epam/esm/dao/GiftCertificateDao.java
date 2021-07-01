@@ -4,7 +4,6 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.query.SortingParameters;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**

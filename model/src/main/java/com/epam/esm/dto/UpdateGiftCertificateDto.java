@@ -4,24 +4,22 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GiftCertificateDto {
+public class UpdateGiftCertificateDto {
 
     private long id;
-    @Size(min = 1, max = 50, message = "Name length should be >= 1, and <= 50")
-    @NotEmpty(message = "Name should not be empty")
+    @Size(max = 50, message = "Name length should be <= 50")
     private String name;
-    @Size(min = 1, max = 100, message = "Description length should be >= 1, and <= 100")
+    @Size(max = 100, message = "Description length should be <= 100")
     private String description;
-    @Min(value = 1, message = "Price should be >= 1")
+    @Min(0)
     private BigDecimal price;
-    @Min(value = 1, message = "Duration should be >= 1")
+    @Min(0)
     private int duration;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX")
@@ -31,7 +29,7 @@ public class GiftCertificateDto {
     private ZonedDateTime lastUpdateDate;
     private List<TagDto> tagList;
 
-    public GiftCertificateDto() {
+    public UpdateGiftCertificateDto() {
     }
 
     public long getId() {
@@ -46,7 +44,7 @@ public class GiftCertificateDto {
         return name;
     }
 
-    public void setName(@Size(min = 1, max = 50) String name) {
+    public void setName(@Size(max = 50) String name) {
         this.name = name;
     }
 
@@ -54,7 +52,7 @@ public class GiftCertificateDto {
         return description;
     }
 
-    public void setDescription(@Size(min = 1, max = 100) String description) {
+    public void setDescription(@Size(max = 100) String description) {
         this.description = description;
     }
 
@@ -62,7 +60,7 @@ public class GiftCertificateDto {
         return price;
     }
 
-    public void setPrice(@Min(1) BigDecimal price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
@@ -70,7 +68,7 @@ public class GiftCertificateDto {
         return duration;
     }
 
-    public void setDuration(@Min(1) int duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
     }
 
@@ -110,7 +108,7 @@ public class GiftCertificateDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        GiftCertificateDto that = (GiftCertificateDto) o;
+        UpdateGiftCertificateDto that = (UpdateGiftCertificateDto) o;
 
         if (id != that.id) return false;
         if (duration != that.duration) return false;

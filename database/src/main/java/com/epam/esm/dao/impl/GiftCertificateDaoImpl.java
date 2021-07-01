@@ -3,17 +3,15 @@ package com.epam.esm.dao.impl;
 import com.epam.esm.dao.AbstractDao;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.query.QueryBuildHelper;
 import com.epam.esm.query.SortingParameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
-import com.epam.esm.query.QueryBuildHelper;
 
 import java.math.BigDecimal;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.ZoneId;
 import java.util.*;
 
 import static com.epam.esm.dao.SqlRequest.*;
@@ -29,9 +27,9 @@ public class GiftCertificateDaoImpl extends AbstractDao<GiftCertificate> impleme
                     rs.getString(NAME_COLUMN_LABEL),
                     rs.getString(DESCRIPTION_COLUMN_LABEL),
                     rs.getBigDecimal(PRICE_COLUMN_LABEL),
-                    rs.getInt(DURATION_COLUMN_LABEL));
-                    //ZonedDateTime.parse(rs.getString(CREATE_DATE_COLUMN_LABEL)),
-                    //ZonedDateTime.parse(rs.getString(LAST_UPDATE_DATE_COLUMN_LABEL)));
+                    rs.getInt(DURATION_COLUMN_LABEL),
+                    rs.getTimestamp(6).toLocalDateTime().atZone(ZoneId.of("GMT+3")),
+                    rs.getTimestamp(LAST_UPDATE_DATE_COLUMN_LABEL).toLocalDateTime().atZone(ZoneId.of("GMT+3")));
 
     private final JdbcTemplate jdbcTemplate;
     private final QueryBuildHelper queryBuildHelper;
@@ -47,8 +45,7 @@ public class GiftCertificateDaoImpl extends AbstractDao<GiftCertificate> impleme
     public void create(GiftCertificate giftCertificate) {
         jdbcTemplate.update(SQL_CREATE_CERTIFICATE, giftCertificate.getName(),
                 giftCertificate.getDescription(), giftCertificate.getPrice(),
-                giftCertificate.getDuration(), ZonedDateTime.now(ZoneOffset.UTC).toString(),
-                ZonedDateTime.now(ZoneOffset.UTC).toString());
+                giftCertificate.getDuration());
     }
 
     @Override
@@ -67,8 +64,10 @@ public class GiftCertificateDaoImpl extends AbstractDao<GiftCertificate> impleme
     public List<GiftCertificate> getWithFiltering(List<Long> certificateIdsByTagName, String partName) {
         List<Object> values = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append(getAllQuery).append(" WHERE ");
         fillFilterQueryInfo(certificateIdsByTagName, partName, queryBuilder, values);
+        if (queryBuilder.toString().isBlank()){
+            return new ArrayList<>();
+        }
         return jdbcTemplate.query(queryBuilder.toString(), ROW_MAPPER, values.toArray());
     }
 
@@ -76,6 +75,7 @@ public class GiftCertificateDaoImpl extends AbstractDao<GiftCertificate> impleme
                                      StringBuilder queryBuilder, List<Object> values) {
         boolean isIdsExist = certificateIdsByTagName != null && !certificateIdsByTagName.isEmpty();
         if (isIdsExist) {
+            queryBuilder.append(getAllQuery).append(" WHERE ");
             String inFilter = queryBuildHelper.buildInFilteringQuery("id", certificateIdsByTagName.size());
             queryBuilder.append(inFilter);
             values.addAll(certificateIdsByTagName);
@@ -83,6 +83,8 @@ public class GiftCertificateDaoImpl extends AbstractDao<GiftCertificate> impleme
         if (partInfo != null) {
             if (isIdsExist) {
                 queryBuilder.append("AND ");
+            }else {
+                queryBuilder.append(getAllQuery).append(" WHERE ");
             }
             queryBuilder.append("(name LIKE ? OR description LIKE ?)");
             String regexPartInfo = queryBuildHelper.buildRegexValue(partInfo);
@@ -97,8 +99,10 @@ public class GiftCertificateDaoImpl extends AbstractDao<GiftCertificate> impleme
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append(getAllQuery).append(" WHERE ");
         fillFilterQueryInfo(certificateIdsByTagName, partName, queryBuilder, values);
+        if (queryBuilder.toString().isBlank()){
+            return new ArrayList<>();
+        }
         queryBuilder.append(" ").append(queryBuildHelper.buildSortingQuery(sortingParameters));
-        System.out.println(queryBuilder.toString());
         return jdbcTemplate.query(queryBuilder.toString(), ROW_MAPPER, values.toArray());
     }
 
@@ -122,18 +126,15 @@ public class GiftCertificateDaoImpl extends AbstractDao<GiftCertificate> impleme
     @Override
     public void updateById(long id, GiftCertificate giftCertificate, boolean isReplace) {
         Map<String, Object> giftCertificateUpdateInfo;
-        if(isReplace){
+        if (isReplace) {
             giftCertificateUpdateInfo = findReplaceInfo(giftCertificate);
-        }else {
+        } else {
             giftCertificateUpdateInfo = findUpdateInfo(giftCertificate);
         }
         if (!giftCertificateUpdateInfo.isEmpty()) {
             StringBuilder updateQueryBuilder = new StringBuilder();
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
-            String lastUpdateDate = ZonedDateTime.now(ZoneOffset.UTC).toString();
-            updateQueryBuilder.append("UPDATE gift_certificate SET last_update_date=' ");
-            updateQueryBuilder.append(lastUpdateDate);
-            updateQueryBuilder.append("',");
+            updateQueryBuilder.append("UPDATE gift_certificate SET last_update_date= NOW()");
+            updateQueryBuilder.append(",");
             String updateColumnsQuery = queryBuildHelper.buildUpdateColumnsQuery(
                     giftCertificateUpdateInfo.keySet());
             updateQueryBuilder.append(updateColumnsQuery);
@@ -165,10 +166,12 @@ public class GiftCertificateDaoImpl extends AbstractDao<GiftCertificate> impleme
         return updateInfo;
     }
 
-    private Map<String, Object> findReplaceInfo(GiftCertificate giftCertificate){
+    private Map<String, Object> findReplaceInfo(GiftCertificate giftCertificate) {
         Map<String, Object> replaceInfo = new HashMap<>();
         String name = giftCertificate.getName();
-        replaceInfo.put(NAME_COLUMN_LABEL, name);
+        if (name != null) {
+            replaceInfo.put(NAME_COLUMN_LABEL, name);
+        }
         String description = giftCertificate.getDescription();
         replaceInfo.put(DESCRIPTION_COLUMN_LABEL, description);
         BigDecimal price = giftCertificate.getPrice();

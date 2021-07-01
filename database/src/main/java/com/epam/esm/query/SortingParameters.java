@@ -3,7 +3,6 @@ package com.epam.esm.query;
 import java.util.List;
 
 public class SortingParameters {
-    //todo validation??
     private final List<String> sortColumns;
     private final List<String> orderTypes;
 

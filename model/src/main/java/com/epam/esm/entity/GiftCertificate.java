@@ -12,24 +12,24 @@ public class GiftCertificate {
     private String description;
     private BigDecimal price;
     private int duration;
-    //private ZonedDateTime createDate;
-    //private ZonedDateTime lastUpdateDate;
+    private ZonedDateTime createDate;
+    private ZonedDateTime lastUpdateDate;
     private List<Tag> tagList;
 
     public GiftCertificate(long id, String name,
-            String description, BigDecimal price, int duration,
+                           String description, BigDecimal price, int duration,
                            ZonedDateTime createDate, ZonedDateTime lastUpdateDate) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
         this.duration = duration;
-        //this.createDate = createDate;
-        //this.lastUpdateDate = lastUpdateDate;
+        this.createDate = createDate;
+        this.lastUpdateDate = lastUpdateDate;
     }
 
     public GiftCertificate(long id, String name,
-                            String description, BigDecimal price, int duration) {
+                           String description, BigDecimal price, int duration) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -40,7 +40,18 @@ public class GiftCertificate {
     public GiftCertificate() {
     }
 
-
+    public GiftCertificate(long id, String name, String description,
+                           BigDecimal price, int duration, ZonedDateTime createDate,
+                           ZonedDateTime lastUpdateDate, List<Tag> tagList) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
+        this.createDate = createDate;
+        this.lastUpdateDate = lastUpdateDate;
+        this.tagList = tagList;
+    }
 
     public long getId() {
         return id;
@@ -82,7 +93,7 @@ public class GiftCertificate {
         this.duration = duration;
     }
 
-    /*public ZonedDateTime getCreateDate() {
+    public ZonedDateTime getCreateDate() {
         return createDate;
     }
 
@@ -90,7 +101,7 @@ public class GiftCertificate {
         this.createDate = createDate;
     }
 
-    public void setCreateDate(String createDate){
+    public void setCreateDate(String createDate) {
         this.createDate = ZonedDateTime.parse(createDate, DateTimeFormatter.ISO_DATE_TIME);
     }
 
@@ -102,9 +113,9 @@ public class GiftCertificate {
         this.lastUpdateDate = lastUpdateDate;
     }
 
-    public void setLastUpdateDate(String lastUpdateDate){
+    public void setLastUpdateDate(String lastUpdateDate) {
         this.lastUpdateDate = ZonedDateTime.parse(lastUpdateDate, DateTimeFormatter.ISO_DATE_TIME);
-    }*/
+    }
 
     public List<Tag> getTagList() {
         return tagList;
@@ -114,8 +125,8 @@ public class GiftCertificate {
         this.tagList = tagList;
     }
 
-    public void addTag(Tag tag){
-        if(tagList == null){
+    public void addTag(Tag tag) {
+        if (tagList == null) {
             tagList = new ArrayList<>();
         }
         tagList.add(tag);
@@ -135,7 +146,7 @@ public class GiftCertificate {
         if (price != null ? !price.equals(that.price) : that.price != null) return false;
         //if (createDate != null ? !createDate.equals(that.createDate) : that.createDate != null) return false;
         //if (lastUpdateDate != null ? !lastUpdateDate.equals(that.lastUpdateDate) : that.lastUpdateDate != null)
-            //return false;
+        //return false;
         return tagList != null ? tagList.equals(that.tagList) : that.tagList == null;
     }
 
@@ -146,8 +157,8 @@ public class GiftCertificate {
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (price != null ? price.hashCode() : 0);
         result = 31 * result + duration;
-        //result = 31 * result + (createDate != null ? createDate.hashCode() : 0);
-        //result = 31 * result + (lastUpdateDate != null ? lastUpdateDate.hashCode() : 0);
+        result = 31 * result + (createDate != null ? createDate.hashCode() : 0);
+        result = 31 * result + (lastUpdateDate != null ? lastUpdateDate.hashCode() : 0);
         result = 31 * result + (tagList != null ? tagList.hashCode() : 0);
         return result;
     }
@@ -160,8 +171,8 @@ public class GiftCertificate {
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", duration=" + duration +
-          //      ", createDate=" + createDate +
-          //      ", lastUpdateDate=" + lastUpdateDate +
+                ", createDate=" + createDate +
+                ", lastUpdateDate=" + lastUpdateDate +
                 ", tagList=" + tagList +
                 '}';
     }

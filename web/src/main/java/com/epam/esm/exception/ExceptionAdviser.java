@@ -30,7 +30,7 @@ public class ExceptionAdviser {
     }
 
     private ResponseEntity<ExceptionInfo> buildErrorResponse(String message, int code,
-                                                                 HttpStatus status) {
+                                                             HttpStatus status) {
         ExceptionInfo response = new ExceptionInfo(message, code);
         return new ResponseEntity<>(response, status);
     }
@@ -50,21 +50,21 @@ public class ExceptionAdviser {
     }
 
     @ExceptionHandler(NoSuchEntityException.class)
-    public ResponseEntity<ExceptionInfo> handleNoSuchEntityException(NoSuchEntityException e,
-                                                                         Locale locale) {
+    public ResponseEntity<ExceptionInfo> handleMissingRequestParameterException(NoSuchEntityException e,
+                                                                                Locale locale) {
         return buildErrorResponse(resolveResourceBundle(e.getMessage(), locale),
                 40400, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ExceptionInfo> handleValidationException(ValidationException e,
-                                                                     Locale locale) {
-        return buildErrorResponse(resolveResourceBundle(e.getMessage(), locale),
-                40600, HttpStatus.CONFLICT);
+                                                                   Locale locale) {
+        return buildErrorResponse(resolveResourceBundle(e.getMessage(), locale), 40600, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<ExceptionInfo> handleNoSuchEntityException(MissingServletRequestParameterException e) {
+    public ResponseEntity<ExceptionInfo> handleMissingRequestParameterException
+            (MissingServletRequestParameterException e) {
         return buildErrorResponse(e.getMessage(), 40002, HttpStatus.BAD_REQUEST);
     }
 
