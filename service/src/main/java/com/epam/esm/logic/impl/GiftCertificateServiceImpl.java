@@ -51,8 +51,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 .orElseThrow(() -> new NoSuchEntityException("certificate.not.created"));
         if (giftCertificate.getTagList() != null) {
             createCertificateTagsWithReference(giftCertificate.getTagList(), newGiftCertificate.getId());
+            addTagsInGiftCertificate(newGiftCertificate);
         }
-        addTagsInGiftCertificate(newGiftCertificate);
         GiftCertificateDto newGiftCertificateDto = mapper.mapToDto(newGiftCertificate);
         return newGiftCertificateDto;
     }

@@ -34,6 +34,22 @@ public class GiftCertificateDto {
     public GiftCertificateDto() {
     }
 
+    public GiftCertificateDto(long id, @Size(min = 1, max = 50,
+            message = "Name length should be >= 1, and <= 50") @NotEmpty(message = "Name should not be empty") String name,
+                              @Size(min = 1, max = 100, message = "Description length should be >= 1, and <= 100")
+                                      String description, @Min(value = 1, message = "Price should be >= 1")
+                                      BigDecimal price, @Min(value = 1, message = "Duration should be >= 1")
+                                      int duration, ZonedDateTime createDate, ZonedDateTime lastUpdateDate, List<TagDto> tagList) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
+        this.createDate = createDate;
+        this.lastUpdateDate = lastUpdateDate;
+        this.tagList = tagList;
+    }
+
     public long getId() {
         return id;
     }

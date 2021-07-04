@@ -32,6 +32,21 @@ public class UpdateGiftCertificateDto {
     public UpdateGiftCertificateDto() {
     }
 
+    public UpdateGiftCertificateDto(long id, @Size(max = 50, message = "Name length should be <= 50") String name,
+                                    @Size(max = 100, message = "Description length should be <= 100") String description,
+                                    @Min(0) BigDecimal price,
+                                    @Min(0) int duration, ZonedDateTime createDate,
+                                    ZonedDateTime lastUpdateDate, List<TagDto> tagList) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
+        this.createDate = createDate;
+        this.lastUpdateDate = lastUpdateDate;
+        this.tagList = tagList;
+    }
+
     public long getId() {
         return id;
     }
