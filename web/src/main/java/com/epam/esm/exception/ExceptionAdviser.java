@@ -50,7 +50,7 @@ public class ExceptionAdviser {
     }
 
     @ExceptionHandler(NoSuchEntityException.class)
-    public ResponseEntity<ExceptionInfo> handleMissingRequestParameterException(NoSuchEntityException e,
+    public ResponseEntity<ExceptionInfo> handleNoSuchEntityException(NoSuchEntityException e,
                                                                                 Locale locale) {
         return buildErrorResponse(resolveResourceBundle(e.getMessage(), locale),
                 40400, HttpStatus.NOT_FOUND);

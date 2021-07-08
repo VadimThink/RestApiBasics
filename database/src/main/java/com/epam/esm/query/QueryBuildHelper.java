@@ -46,12 +46,16 @@ public class QueryBuildHelper {
         queryBuilder.append("ORDER BY ");
         List<String> sortColumns = convertToDBFields(sortParameters.getSortColumns());
         List<String> orderTypes = sortParameters.getOrderTypes();
+        int orderTypesSize = 0;
+        if (orderTypes != null){
+            orderTypesSize = orderTypes.size();
+        }
         for (int i = 0; i < sortColumns.size(); i++) {
             if (i != 0) {
                 queryBuilder.append(", ");
             }
             queryBuilder.append(sortColumns.get(i)).append(" ");
-            queryBuilder.append(i < orderTypes.size() ? orderTypes.get(i) : "ASC");
+            queryBuilder.append(i < orderTypesSize ? orderTypes.get(i) : "ASC");
         }
         return queryBuilder.toString();
     }

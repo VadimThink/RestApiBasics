@@ -173,17 +173,17 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         List<GiftCertificateDto> giftCertificateDtoList = new ArrayList<>();
         List<GiftCertificate> giftCertificates;
         boolean isSortExist = sortColumns != null;
+        boolean isFilterExist = isFilterExist(tagName, partName);
+        SortingParameters sortParameters = null;
         if (isSortExist) {
-            SortingParameters sortParameters = new SortingParameters(sortColumns, orderTypes);
+            sortParameters = new SortingParameters(sortColumns, orderTypes);
             SortingParametersValidator.validateParams(sortParameters);
-            if (isFilterExist(tagName, partName)) {
-                giftCertificates = findCertificatesWithSortingAndFiltering(tagName, partName, sortParameters);
-            } else {
-                giftCertificates = giftCertificateDao.getWithSorting(sortParameters);
-            }
-        } else if (isFilterExist(tagName, partName)) {
-            giftCertificates = findCertificatesWithFiltering(tagName, partName);
-        } else {
+        }
+        if (isFilterExist) {
+            giftCertificates = findCertificatesWithFiltering(tagName, partName, sortParameters);
+        } else if (isSortExist) {
+            giftCertificates = giftCertificateDao.getWithSorting(sortParameters);
+        } else{
             giftCertificates = giftCertificateDao.getAll();
         }
         for (GiftCertificate giftCertificate : giftCertificates) {
@@ -207,19 +207,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return tagName != null || partInfo != null;
     }
 
-    private List<GiftCertificate> findCertificatesWithSortingAndFiltering
-            (String tagName, String partInfo, SortingParameters sortParameters) throws NoSuchEntityException {
+    private List<GiftCertificate> findCertificatesWithFiltering
+            (String tagName, String partName, SortingParameters sortingParameters) throws NoSuchEntityException {
         List<Long> certificateIdsByTagName = null;
         if (tagName != null) {
             certificateIdsByTagName = findCertificateIdsByTagName(tagName);
         }
-        return giftCertificateDao.getWithSortingAndFiltering(sortParameters, certificateIdsByTagName, partInfo);
-    }
-
-    private List<GiftCertificate> findCertificatesWithFiltering(String tagName, String partName) throws NoSuchEntityException {
-        List<Long> certificateIdsByTagName = null;
-        if (tagName != null) {
-            certificateIdsByTagName = findCertificateIdsByTagName(tagName);
+        if (sortingParameters != null) {
+            return giftCertificateDao.getWithSortingAndFiltering(sortingParameters, certificateIdsByTagName, partName);
         }
         return giftCertificateDao.getWithFiltering(certificateIdsByTagName, partName);
     }

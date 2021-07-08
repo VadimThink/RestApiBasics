@@ -14,14 +14,18 @@ public class SortingParametersValidator {
     private final static List<String> availableOrderTypes = new ArrayList<>(Arrays.asList("ASC", "DESC"));
 
     public static void validateParams(SortingParameters sortingParameters) {
-        for (String columnName : sortingParameters.getSortColumns()) {
-            if (!availableColumns.contains(columnName)) {
-                throw new ValidationException("Not available column name: " + columnName);
+        if (sortingParameters.getSortColumns() != null) {
+            for (String columnName : sortingParameters.getSortColumns()) {
+                if (!availableColumns.contains(columnName)) {
+                    throw new ValidationException("validation.not.available.column");
+                }
             }
         }
-        for (String orderType : sortingParameters.getOrderTypes()) {
-            if (!availableOrderTypes.contains(orderType)) {
-                throw new ValidationException("Not available order type: " + orderType);
+        if (sortingParameters.getOrderTypes() != null) {
+            for (String orderType : sortingParameters.getOrderTypes()) {
+                if (!availableOrderTypes.contains(orderType)) {
+                    throw new ValidationException("validation.not.available.order");
+                }
             }
         }
     }

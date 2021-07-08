@@ -97,7 +97,7 @@ public class GiftCertificateDaoImpl extends AbstractDao<GiftCertificate> impleme
     public List<GiftCertificate> getWithSortingAndFiltering(SortingParameters sortingParameters, List<Long> certificateIdsByTagName, String partName) {
         List<Object> values = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append(getAllQuery).append(" WHERE ");
+        //queryBuilder.append(getAllQuery).append(" WHERE ");
         fillFilterQueryInfo(certificateIdsByTagName, partName, queryBuilder, values);
         if (queryBuilder.toString().isBlank()){
             return new ArrayList<>();
