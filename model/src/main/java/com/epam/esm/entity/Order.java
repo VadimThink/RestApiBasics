@@ -1,6 +1,7 @@
 package com.epam.esm.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
@@ -20,7 +21,7 @@ public class Order extends AbstractEntity {
     private ZonedDateTime orderDate;
 
     @Column(nullable = false, updatable = false)
-    //todo проверка как в сертификате
+    @DecimalMin(value = "1", message = "Price should be >= 1")
     private BigDecimal cost;
 
     public Order() {

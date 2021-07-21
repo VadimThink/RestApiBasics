@@ -2,6 +2,7 @@ package com.epam.esm.controller;
 
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.exception.DuplicateException;
+import com.epam.esm.exception.InvalidParametersException;
 import com.epam.esm.exception.NoSuchEntityException;
 import com.epam.esm.exception.ValidationExceptionChecker;
 import com.epam.esm.logic.TagService;
@@ -13,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+
+import static com.epam.esm.constant.RequestParams.PAGE;
+import static com.epam.esm.constant.RequestParams.SIZE;
 
 @RestController
 @Profile("prod")
@@ -40,13 +44,15 @@ public class TagController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<TagDto> getAll() {
-        return tagService.getAll();
+    public List<TagDto> getAll(
+            @RequestParam(name = PAGE, required = false) int page,
+            @RequestParam(name = SIZE, required = false) int size) throws InvalidParametersException {
+        return tagService.getAll(page, size);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(@PathVariable("id") long id) {
+    public void deleteById(@PathVariable("id") long id) throws NoSuchEntityException {
         tagService.deleteById(id);
     }
 }

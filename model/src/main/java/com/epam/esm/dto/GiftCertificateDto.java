@@ -3,6 +3,7 @@ package com.epam.esm.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -20,7 +21,7 @@ public class GiftCertificateDto {
     private String name;
     @Size(min = 1, max = 100, message = "Description length should be >= 1, and <= 100")
     private String description;
-    @Min(value = 1, message = "Price should be >= 1")
+    @DecimalMin(value = "1", message = "Price should be >= 1")
     private BigDecimal price;
     @Min(value = 1, message = "Duration should be >= 1")
     private int duration;

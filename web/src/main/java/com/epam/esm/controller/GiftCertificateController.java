@@ -3,6 +3,7 @@ package com.epam.esm.controller;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.UpdateGiftCertificateDto;
 import com.epam.esm.exception.DuplicateException;
+import com.epam.esm.exception.InvalidParametersException;
 import com.epam.esm.exception.NoSuchEntityException;
 import com.epam.esm.exception.ValidationExceptionChecker;
 import com.epam.esm.logic.GiftCertificateService;
@@ -118,20 +119,25 @@ public class GiftCertificateController {
     /**
      * Gets all by tags.
      *
-     * @param tagName     the tag name
+     * @param tagNames     the tag names
      * @param partName    the part name
      * @param sortColumns the sort columns
      * @param orderTypes  the order types
+     * @param page the page number
+     * @param size the size
      * @return the all by tags
      * @throws NoSuchEntityException the no such entity exception
      */
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<GiftCertificateDto> getAllByTags(
-            @RequestParam(name = TAG_NAME, required = false) String tagName,
+            @RequestParam(name = TAG_NAME, required = false) List<String> tagNames,
             @RequestParam(name = PART_NAME, required = false) String partName,
             @RequestParam(name = SORT, required = false) List<String> sortColumns,
-            @RequestParam(name = ORDER, required = false) List<String> orderTypes) throws NoSuchEntityException {
-        return giftCertificateService.findBySearchParams(tagName, partName, sortColumns, orderTypes);
+            @RequestParam(name = ORDER, required = false) List<String> orderTypes,
+            @RequestParam(name = PAGE, required = false) int page,
+            @RequestParam(name = SIZE, required = false) int size)
+    throws NoSuchEntityException, InvalidParametersException {
+        return giftCertificateService.findBySearchParams(tagNames, partName, sortColumns, orderTypes, page, size);
     }
 }

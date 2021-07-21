@@ -1,6 +1,8 @@
 package com.epam.esm.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Min;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,9 +19,9 @@ public class GiftCertificate extends AbstractEntity {
     private String description;
 
     @Column(nullable = false)
-    //todo min max из JPA
+    @DecimalMin(value = "1", message = "Price should be >= 1")
     private BigDecimal price;
-    //todo сюда тоже
+    @Min(value = 1, message = "Duration should be >= 1")
     @Column(nullable = false)
     private int duration;
 
