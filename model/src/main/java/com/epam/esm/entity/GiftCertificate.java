@@ -41,7 +41,7 @@ public class GiftCertificate extends AbstractEntity {
     public GiftCertificate() {
     }
 
-    @PrePersist
+    @PrePersist//todo переместить в listener
     protected void onCreate() {
         this.createDate = ZonedDateTime.now();
         this.lastUpdateDate = createDate;

@@ -21,15 +21,16 @@ public class Order extends AbstractEntity {
     private ZonedDateTime orderDate;
 
     @Column(nullable = false, updatable = false)
-    @DecimalMin(value = "1", message = "Price should be >= 1")
+    @DecimalMin(value = "1", message = "Cost should be >= 1")
     private BigDecimal cost;
 
     public Order() {
     }
 
-    @PrePersist
+    @PrePersist//todo в listener
     public void onCreate() {
         orderDate = ZonedDateTime.now();
+        //user.setSpentMoney(new BigDecimal(String.valueOf(user.getSpentMoney().add(cost))));
     }
 
     public User getUser() {

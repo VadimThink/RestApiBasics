@@ -1,5 +1,6 @@
 package com.epam.esm.logic.impl;
 
+import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.InvalidParametersException;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,12 +29,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto create(UserDto userDto) {
         User user = userMapper.mapToEntity(userDto);
         return userMapper.mapToDto(userRepository.create(user));
     }
 
     @Override
+    @Transactional
     public List<UserDto> getAll(int page, int size) throws InvalidParametersException {
         /*Pageable pageRequest;
         try {
@@ -44,6 +48,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto getById(long id) throws NoSuchEntityException {
         User user = userRepository.findById(id).orElseThrow(() -> new NoSuchEntityException("user.not.found"));
         return userMapper.mapToDto(user);

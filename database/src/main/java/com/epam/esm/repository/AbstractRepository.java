@@ -2,7 +2,6 @@ package com.epam.esm.repository;
 
 import com.epam.esm.entity.AbstractEntity;
 import com.epam.esm.query.QueryBuildHelper;
-import org.springframework.data.domain.Pageable;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -50,7 +49,7 @@ public abstract class AbstractRepository<T extends AbstractEntity> implements Cr
 
     @Override
     public Optional<T> findById(long id) {
-        return Optional.empty();
+        return findByField("id", id);
     }
 
     @Override

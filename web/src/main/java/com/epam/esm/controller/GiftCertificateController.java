@@ -64,8 +64,7 @@ public class GiftCertificateController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public GiftCertificateDto getById(@PathVariable("id") long id) throws NoSuchEntityException {
-        GiftCertificateDto result = giftCertificateService.findById(id);
-        return result;
+        return giftCertificateService.findById(id);
     }
 
     /**
