@@ -43,4 +43,6 @@ public interface TagService {
      * @param id the id
      */
     void deleteById(long id) throws NoSuchEntityException;
+
+    TagDto findTheMostWidelyUsedTagOfUserWithTheHighestCostOfAllOrders() throws NoSuchEntityException;
 }

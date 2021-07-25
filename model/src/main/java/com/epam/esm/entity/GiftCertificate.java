@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Entity
-@Table(name = "gift_certificate")
+@Table(name = "gift_certificates")
 public class GiftCertificate extends AbstractEntity {
 
     @Column(length = 50, nullable = false)
@@ -32,9 +32,9 @@ public class GiftCertificate extends AbstractEntity {
     private ZonedDateTime lastUpdateDate;
 
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    @JoinTable(name="certificate_tags",
-            joinColumns = @JoinColumn(name="certificate_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name="tag_id", referencedColumnName = "id")
+    @JoinTable(name = "certificates_tags",
+            joinColumns = @JoinColumn(name = "certificate_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id")
     )
     private List<Tag> tagList;
 

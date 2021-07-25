@@ -48,7 +48,7 @@ public class ExceptionAdviser {
 
     @ExceptionHandler(NoSuchEntityException.class)
     public ResponseEntity<ExceptionInfo> handleNoSuchEntityException(NoSuchEntityException e,
-                                                                                Locale locale) {
+                                                                     Locale locale) {
         return buildErrorResponse(resolveResourceBundle(e.getMessage(), locale),
                 40400, HttpStatus.NOT_FOUND);
     }

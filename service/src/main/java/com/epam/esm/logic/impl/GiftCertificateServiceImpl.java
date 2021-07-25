@@ -4,7 +4,6 @@ import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.UpdateGiftCertificateDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exception.InvalidParametersException;
 import com.epam.esm.exception.NoSuchEntityException;
 import com.epam.esm.logic.GiftCertificateService;
 import com.epam.esm.mapper.GiftCertificateMapper;
@@ -14,15 +13,11 @@ import com.epam.esm.query.SortingParametersValidator;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.ValidationException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Optional;
 
@@ -113,19 +108,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     @Transactional
-    public List<GiftCertificateDto> findBySearchParams(List<String> tagNames, String partName, List<String> sortColumns, List<String> orderTypes, int page, int size) throws NoSuchEntityException, InvalidParametersException {
-        /*Pageable pageRequest;
-        try {
-            pageRequest = PageRequest.of(page, size);
-        } catch (IllegalArgumentException e) {
-            throw new InvalidParametersException("invalid.pagination");
-        }todo*/
+    public List<GiftCertificateDto> findBySearchParams(List<String> tagNames, String partName, List<String> sortColumns, List<String> orderTypes, int page, int size) {
         SortingParameters sortParameters = null;
         if (sortColumns != null) {
             sortParameters = new SortingParameters(sortColumns, orderTypes);
             SortingParametersValidator.validateParams(sortParameters);
         }
-        return giftCertificateMapper.mapListToDto(certificateRepository.getAllWithSortingFiltering(sortParameters, tagNames, partName/*, pageRequest*/));
+        return giftCertificateMapper.mapListToDto(certificateRepository.getAllWithSortingFiltering(sortParameters, tagNames, partName, page, size));
     }
 
     private List<Tag> addTags(List<Tag> tags) {
@@ -138,7 +127,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return addedTags;
     }
 
-    private void updateFields(GiftCertificate giftCertificate, GiftCertificate updateGiftCertificate){
+    private void updateFields(GiftCertificate giftCertificate, GiftCertificate updateGiftCertificate) {
         String name = updateGiftCertificate.getName();
         if (name != null && !giftCertificate.getName().equals(name)) {
             giftCertificate.setName(name);

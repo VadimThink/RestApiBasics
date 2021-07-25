@@ -51,7 +51,7 @@ public class UserController {
                                             @RequestParam(value = "page", required = true) int page,
                                             @RequestParam(value = "size", required = true) int size)
             throws InvalidParametersException, NoSuchEntityException {
-       return orderService.getAllByUserId(id, page, size);
+        return orderService.getAllByUserId(id, page, size);
     }
 
     @GetMapping("/{id}/orders/{orderId}")
@@ -60,4 +60,5 @@ public class UserController {
             throws NoSuchEntityException {
         return orderService.getByUserId(id, orderId);
     }
+
 }

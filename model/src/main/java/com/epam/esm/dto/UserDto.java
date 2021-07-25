@@ -1,12 +1,12 @@
 package com.epam.esm.dto;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
 
 public class UserDto {
 
     private String name;
-    private List<OrderDto> orders = new ArrayList<>();
+
+    private BigDecimal spentMoney;
 
     public UserDto() {
     }
@@ -19,12 +19,12 @@ public class UserDto {
         this.name = name;
     }
 
-    public List<OrderDto> getOrders() {
-        return orders;
+    public BigDecimal getSpentMoney() {
+        return spentMoney;
     }
 
-    public void setOrders(List<OrderDto> orders) {
-        this.orders = orders;
+    public void setSpentMoney(BigDecimal spentMoney) {
+        this.spentMoney = spentMoney;
     }
 
     @Override
@@ -35,13 +35,13 @@ public class UserDto {
         UserDto userDto = (UserDto) o;
 
         if (name != null ? !name.equals(userDto.name) : userDto.name != null) return false;
-        return orders != null ? orders.equals(userDto.orders) : userDto.orders == null;
+        return spentMoney != null ? spentMoney.equals(userDto.spentMoney) : userDto.spentMoney == null;
     }
 
     @Override
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (orders != null ? orders.hashCode() : 0);
+        result = 31 * result + (spentMoney != null ? spentMoney.hashCode() : 0);
         return result;
     }
 
@@ -49,7 +49,7 @@ public class UserDto {
     public String toString() {
         return "UserDto{" +
                 "name='" + name + '\'' +
-                ", orders=" + orders +
+                ", spentMoney=" + spentMoney +
                 '}';
     }
 }

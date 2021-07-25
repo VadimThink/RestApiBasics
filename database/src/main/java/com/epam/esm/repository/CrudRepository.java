@@ -1,7 +1,6 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.entity.AbstractEntity;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,7 +9,7 @@ public interface CrudRepository<T extends AbstractEntity> {
 
     T create(T entity);
 
-    List<T> getAll();
+    List<T> getAll(int page, int size);
 
     Optional<T> findById(long id);
 

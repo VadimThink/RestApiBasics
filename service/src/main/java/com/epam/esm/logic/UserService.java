@@ -1,10 +1,10 @@
 package com.epam.esm.logic;
 
 import com.epam.esm.dto.UserDto;
-import com.epam.esm.entity.User;
 import com.epam.esm.exception.InvalidParametersException;
 import com.epam.esm.exception.NoSuchEntityException;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface UserService {
@@ -35,4 +35,9 @@ public interface UserService {
      * @throws NoSuchEntityException when User is not found
      */
     UserDto getById(long id) throws NoSuchEntityException;
+
+    void addSpentMoney(long id, BigDecimal addedValue) throws NoSuchEntityException;
+
+    UserDto findUserWithMaxSpentMoney();
+
 }

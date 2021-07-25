@@ -118,12 +118,12 @@ public class GiftCertificateController {
     /**
      * Gets all by tags.
      *
-     * @param tagNames     the tag names
+     * @param tagNames    the tag names
      * @param partName    the part name
      * @param sortColumns the sort columns
      * @param orderTypes  the order types
-     * @param page the page number
-     * @param size the size
+     * @param page        the page number
+     * @param size        the size
      * @return the all by tags
      * @throws NoSuchEntityException the no such entity exception
      */
@@ -136,7 +136,7 @@ public class GiftCertificateController {
             @RequestParam(name = ORDER, required = false) List<String> orderTypes,
             @RequestParam(name = PAGE, required = false) int page,
             @RequestParam(name = SIZE, required = false) int size)
-    throws NoSuchEntityException, InvalidParametersException {
+            throws NoSuchEntityException, InvalidParametersException {
         return giftCertificateService.findBySearchParams(tagNames, partName, sortColumns, orderTypes, page, size);
     }
 }

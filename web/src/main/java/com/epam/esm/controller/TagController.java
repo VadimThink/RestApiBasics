@@ -55,4 +55,10 @@ public class TagController {
     public void deleteById(@PathVariable("id") long id) throws NoSuchEntityException {
         tagService.deleteById(id);
     }
+
+    @GetMapping("/best")
+    @ResponseStatus(HttpStatus.OK)
+    public TagDto getTheMostWidelyUsedTagOfUserWithHighestOrderCost() throws NoSuchEntityException {
+        return tagService.findTheMostWidelyUsedTagOfUserWithTheHighestCostOfAllOrders();
+    }
 }

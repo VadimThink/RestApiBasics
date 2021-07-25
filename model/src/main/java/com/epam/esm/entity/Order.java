@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 @Entity
-@Table(name = "order")
+@Table(name = "orders")
 public class Order extends AbstractEntity {
 
     @ManyToOne
@@ -14,10 +14,10 @@ public class Order extends AbstractEntity {
     private User user;
 
     @OneToOne
-    @JoinColumn(name="certificate_id", nullable = false)
+    @JoinColumn(name = "certificate_id", nullable = false)
     private GiftCertificate giftCertificate;
 
-    @Column(name = "date", nullable = false, updatable = false)
+    @Column(name = "order_date", nullable = false, updatable = false)
     private ZonedDateTime orderDate;
 
     @Column(nullable = false, updatable = false)

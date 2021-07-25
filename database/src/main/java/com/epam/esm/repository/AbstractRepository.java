@@ -36,14 +36,14 @@ public abstract class AbstractRepository<T extends AbstractEntity> implements Cr
     }
 
     @Override
-    public List<T> getAll(/*Pageable pageable*/) {
+    public List<T> getAll(int page, int size) {
         CriteriaQuery<T> query = builder.createQuery(entityClass);
         Root<T> root = query.from(entityClass);
         query.select(root);
 
         return entityManager.createQuery(query)
-                /*.setFirstResult((int)pageable.getOffset())
-                .setMaxResults(pageable.getPageSize()) todo*/
+                .setFirstResult(page * size)
+                .setMaxResults(size)
                 .getResultList();
     }
 

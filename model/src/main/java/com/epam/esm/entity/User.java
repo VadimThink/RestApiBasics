@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "user")
-public class User extends AbstractEntity{
+@Table(name = "users")
+public class User extends AbstractEntity {
 
     @Column(length = 50, nullable = false)
     private String name;
@@ -22,9 +22,11 @@ public class User extends AbstractEntity{
     }
 
     @PrePersist
-    protected void onCreate(){
+    protected void onCreate() {
         spentMoney = BigDecimal.ZERO;
     }
+
+
 
     public String getName() {
         return name;

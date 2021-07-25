@@ -6,7 +6,6 @@ import com.epam.esm.query.SortingParameters;
 import com.epam.esm.repository.AbstractRepository;
 import com.epam.esm.repository.GiftCertificateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -25,8 +24,7 @@ public class GiftCertificateRepositoryImpl extends AbstractRepository<GiftCertif
 
     @Override
     public List<GiftCertificate> getAllWithSortingFiltering(SortingParameters sortParameters,
-                                                            List<String> tagNames, String partInfo/*,
-                                                            Pageable pageable*/) {
+                                                            List<String> tagNames, String partInfo, int page, int size) {
         CriteriaQuery<GiftCertificate> query = builder.createQuery(GiftCertificate.class);
         Root<GiftCertificate> root = query.from(GiftCertificate.class);
         query.select(root);
@@ -42,7 +40,7 @@ public class GiftCertificateRepositoryImpl extends AbstractRepository<GiftCertif
             query.where(queryBuildHelper.buildAndPredicates(predicates));
             if (tagNames != null) {
                 query.groupBy(root.get("id"));
-                query.having(builder.greaterThanOrEqualTo(builder.count(root), (long)tagNames.size()));
+                query.having(builder.greaterThanOrEqualTo(builder.count(root), (long) tagNames.size()));
             }
         }
 
@@ -54,8 +52,8 @@ public class GiftCertificateRepositoryImpl extends AbstractRepository<GiftCertif
         }
 
         return entityManager.createQuery(query)
-                /*.setFirstResult((int)pageable.getOffset())
-                .setMaxResults(pageable.getPageSize())todo*/
+                .setFirstResult(page * size)
+                .setMaxResults(size)
                 .getResultList();
     }
 
@@ -72,4 +70,5 @@ public class GiftCertificateRepositoryImpl extends AbstractRepository<GiftCertif
 
         return builder.or(predicateByNameInfo, predicateByDescriptionInfo);
     }
+
 }

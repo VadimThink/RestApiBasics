@@ -1,8 +1,5 @@
 package com.epam.esm.dto;
 
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.User;
-
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
@@ -10,9 +7,9 @@ public class OrderDto {
 
     private long id;
 
-    private User user;
+    private UserDto user;
 
-    private GiftCertificate giftCertificate;
+    private GiftCertificateDto giftCertificate;
 
     private ZonedDateTime orderDate;
 
@@ -29,19 +26,19 @@ public class OrderDto {
         this.id = id;
     }
 
-    public User getUser() {
+    public UserDto getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserDto user) {
         this.user = user;
     }
 
-    public GiftCertificate getGiftCertificate() {
+    public GiftCertificateDto getGiftCertificate() {
         return giftCertificate;
     }
 
-    public void setGiftCertificate(GiftCertificate giftCertificate) {
+    public void setGiftCertificate(GiftCertificateDto giftCertificate) {
         this.giftCertificate = giftCertificate;
     }
 

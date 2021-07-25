@@ -1,12 +1,11 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.entity.Order;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-public interface OrderRepository extends CrudRepository<Order>{
+public interface OrderRepository extends CrudRepository<Order> {
 
-    List<Order> getAllByUserId(long userId/*, Pageable pageable*/);
-
+    List<Order> getAllByUserId(long userId, int page, int size);
+    List<Order> getAllByUserId(long userId);
 }

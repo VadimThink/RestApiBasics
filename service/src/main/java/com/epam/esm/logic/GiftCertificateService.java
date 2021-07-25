@@ -63,7 +63,7 @@ public interface GiftCertificateService {
     /**
      * Gets by search params.
      *
-     * @param tagNames     the tag name
+     * @param tagNames    the tag name
      * @param partName    the part name
      * @param sortColumns the sort columns
      * @param orderTypes  the order types
