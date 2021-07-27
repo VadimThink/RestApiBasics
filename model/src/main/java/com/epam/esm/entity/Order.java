@@ -1,5 +1,7 @@
 package com.epam.esm.entity;
 
+import org.hibernate.annotations.BatchSize;
+
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;

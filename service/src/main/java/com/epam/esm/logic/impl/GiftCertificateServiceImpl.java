@@ -108,13 +108,17 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     @Transactional
-    public List<GiftCertificateDto> findBySearchParams(List<String> tagNames, String partName, List<String> sortColumns, List<String> orderTypes, int page, int size) {
+    public List<GiftCertificateDto> findBySearchParams(List<String> tagNames, String partName,
+                                                       List<String> sortColumns, List<String> orderTypes,
+                                                       int page, int size) {
         SortingParameters sortParameters = null;
         if (sortColumns != null) {
             sortParameters = new SortingParameters(sortColumns, orderTypes);
             SortingParametersValidator.validateParams(sortParameters);
         }
-        return giftCertificateMapper.mapListToDto(certificateRepository.getAllWithSortingFiltering(sortParameters, tagNames, partName, page, size));
+        return giftCertificateMapper.mapListToDto(
+                certificateRepository.getAllWithSortingFiltering(
+                        sortParameters, tagNames, partName, page, size));
     }
 
     private List<Tag> addTags(List<Tag> tags) {

@@ -1,5 +1,7 @@
 package com.epam.esm.entity;
 
+import org.hibernate.annotations.BatchSize;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ public class User extends AbstractEntity {
     private BigDecimal spentMoney;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @BatchSize(size = 25)
     private List<Order> orders = new ArrayList<>();
 
     public User() {

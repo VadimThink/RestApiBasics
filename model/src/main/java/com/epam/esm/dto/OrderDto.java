@@ -1,9 +1,12 @@
 package com.epam.esm.dto;
 
+import com.epam.esm.entity.Order;
+import org.springframework.hateoas.RepresentationModel;
+
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
-public class OrderDto {
+public class OrderDto extends RepresentationModel<OrderDto> {
 
     private long id;
 

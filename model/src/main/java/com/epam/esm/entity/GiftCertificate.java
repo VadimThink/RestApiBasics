@@ -1,5 +1,7 @@
 package com.epam.esm.entity;
 
+import org.hibernate.annotations.BatchSize;
+
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
@@ -9,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Entity
+@BatchSize(size = 25)
 @Table(name = "gift_certificates")
 public class GiftCertificate extends AbstractEntity {
 
@@ -32,6 +35,7 @@ public class GiftCertificate extends AbstractEntity {
     private ZonedDateTime lastUpdateDate;
 
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @BatchSize(size = 25)
     @JoinTable(name = "certificates_tags",
             joinColumns = @JoinColumn(name = "certificate_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id")

@@ -1,8 +1,12 @@
 package com.epam.esm.dto;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import java.math.BigDecimal;
 
-public class UserDto {
+public class UserDto extends RepresentationModel<UserDto> {
+
+    private int id;
 
     private String name;
 
@@ -27,20 +31,32 @@ public class UserDto {
         this.spentMoney = spentMoney;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
 
         UserDto userDto = (UserDto) o;
 
+        if (id != userDto.id) return false;
         if (name != null ? !name.equals(userDto.name) : userDto.name != null) return false;
         return spentMoney != null ? spentMoney.equals(userDto.spentMoney) : userDto.spentMoney == null;
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
+        int result = super.hashCode();
+        result = 31 * result + id;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (spentMoney != null ? spentMoney.hashCode() : 0);
         return result;
     }
@@ -48,7 +64,8 @@ public class UserDto {
     @Override
     public String toString() {
         return "UserDto{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", spentMoney=" + spentMoney +
                 '}';
     }
