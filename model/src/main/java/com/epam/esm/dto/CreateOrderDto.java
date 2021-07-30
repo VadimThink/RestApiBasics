@@ -16,6 +16,11 @@ public class CreateOrderDto {
     public CreateOrderDto() {
     }
 
+    public CreateOrderDto(long userId, long certificateId) {
+        this.userId = userId;
+        this.certificateId = certificateId;
+    }
+
     public long getUserId() {
         return userId;
     }

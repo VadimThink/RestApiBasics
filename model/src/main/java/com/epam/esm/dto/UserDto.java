@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 
 public class UserDto extends RepresentationModel<UserDto> {
 
-    private int id;
+    private long id;
 
     @NotEmpty
     @Size(min = 1, max = 50, message = "Name length should be >= 1, and <= 50")
@@ -17,6 +17,12 @@ public class UserDto extends RepresentationModel<UserDto> {
     private BigDecimal spentMoney;
 
     public UserDto() {
+    }
+
+    public UserDto(long id, String name, BigDecimal spentMoney) {
+        this.id = id;
+        this.name = name;
+        this.spentMoney = spentMoney;
     }
 
     public String getName() {
@@ -35,11 +41,11 @@ public class UserDto extends RepresentationModel<UserDto> {
         this.spentMoney = spentMoney;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -59,7 +65,7 @@ public class UserDto extends RepresentationModel<UserDto> {
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + id;
+        result = 31 * result + (int) (id ^ (id >>> 32));
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (spentMoney != null ? spentMoney.hashCode() : 0);
         return result;

@@ -20,6 +20,14 @@ public class OrderDto extends RepresentationModel<OrderDto> {
     public OrderDto() {
     }
 
+    public OrderDto(long id, UserDto user, GiftCertificateDto giftCertificate, ZonedDateTime orderDate, BigDecimal cost) {
+        this.id = id;
+        this.user = user;
+        this.giftCertificate = giftCertificate;
+        this.orderDate = orderDate;
+        this.cost = cost;
+    }
+
     public long getId() {
         return id;
     }

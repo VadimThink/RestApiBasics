@@ -32,8 +32,8 @@ public class ExceptionAdviser {
     }
 
     @ExceptionHandler(DuplicateException.class)
-    public ResponseEntity<ExceptionInfo> handleDuplicateEntityException(Locale locale) {
-        return buildErrorResponse(resolveResourceBundle("exception.duplicate", locale),
+    public ResponseEntity<ExceptionInfo> handleDuplicateEntityException(DuplicateException e,Locale locale) {
+        return buildErrorResponse(resolveResourceBundle(e.getMessage(), locale),
                 40901, HttpStatus.CONFLICT);
     }
 
