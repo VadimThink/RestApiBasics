@@ -1,230 +1,149 @@
 package com.epam.esm.logic.impl;
 
-import com.epam.esm.dao.GiftCertificateDao;
-import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.UpdateGiftCertificateDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exception.DuplicateException;
 import com.epam.esm.exception.NoSuchEntityException;
 import com.epam.esm.logic.GiftCertificateService;
 import com.epam.esm.mapper.GiftCertificateMapper;
 import com.epam.esm.mapper.UpdateGiftCertificateMapper;
 import com.epam.esm.query.SortingParameters;
 import com.epam.esm.query.SortingParametersValidator;
+import com.epam.esm.repository.GiftCertificateRepository;
+import com.epam.esm.repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class GiftCertificateServiceImpl implements GiftCertificateService {
-    private final GiftCertificateDao giftCertificateDao;
-    private final TagDao tagDao;
-    private final GiftCertificateMapper mapper;
-    private final UpdateGiftCertificateMapper updateMapper;
+
+    private final GiftCertificateRepository certificateRepository;
+    private final TagRepository tagRepository;
+    private final GiftCertificateMapper giftCertificateMapper;
+    private final UpdateGiftCertificateMapper updateGiftCertificateMapper;
 
     @Autowired
-    public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao, TagDao tagDao, GiftCertificateMapper mapper,
-                                      UpdateGiftCertificateMapper updateMapper) {
-        this.giftCertificateDao = giftCertificateDao;
-        this.tagDao = tagDao;
-        this.mapper = mapper;
-        this.updateMapper = updateMapper;
+    public GiftCertificateServiceImpl(GiftCertificateRepository certificateRepository,
+                                      TagRepository tagRepository,
+                                      GiftCertificateMapper giftCertificateMapper,
+                                      UpdateGiftCertificateMapper updateGiftCertificateMapper) {
+        this.certificateRepository = certificateRepository;
+        this.tagRepository = tagRepository;
+        this.giftCertificateMapper = giftCertificateMapper;
+        this.updateGiftCertificateMapper = updateGiftCertificateMapper;
     }
 
     @Override
     @Transactional
-    public GiftCertificateDto create(GiftCertificateDto giftCertificateDto) throws DuplicateException, NoSuchEntityException {
-        GiftCertificate giftCertificate = mapper.mapToEntity(giftCertificateDto);
-        String certificateName = giftCertificate.getName();
-        boolean isCertificateExist = giftCertificateDao.findByName(certificateName).isPresent();
-        if (isCertificateExist) {
-            throw new DuplicateException("certificate.exist");
-        }
-        giftCertificateDao.create(giftCertificate);
-        GiftCertificate newGiftCertificate = giftCertificateDao.findByName(certificateName)
-                .orElseThrow(() -> new NoSuchEntityException("certificate.not.created"));
+    public GiftCertificateDto create(GiftCertificateDto giftCertificateDto) {
+        GiftCertificate giftCertificate = giftCertificateMapper.mapToEntity(giftCertificateDto);
+        List<Tag> tagsToAdd = new ArrayList<>();
         if (giftCertificate.getTagList() != null) {
-            createCertificateTagsWithReference(giftCertificate.getTagList(), newGiftCertificate.getId());
-            addTagsInGiftCertificate(newGiftCertificate);
+            for (Tag tag : giftCertificate.getTagList()) {
+                Optional<Tag> tagOptional = tagRepository.findByName(tag.getName());
+                if (tagOptional.isPresent()) {
+                    tagsToAdd.add(tagOptional.get());
+                } else {
+                    tagsToAdd.add(tag);
+                }
+            }
         }
-        GiftCertificateDto newGiftCertificateDto = mapper.mapToDto(newGiftCertificate);
-        return newGiftCertificateDto;
-    }
-
-    private void createCertificateTagsWithReference(List<Tag> tags, long certificateId) {
-        for (Tag tag : tags) {
-            String tagName = tag.getName();
-            Optional<Tag> tagOptional = tagDao.findByName(tagName);
-            Tag fullTag = tagOptional.orElseGet(() -> createCertificateTag(tag));
-            long tagId = fullTag.getId();
-            giftCertificateDao.createCertificateTagReference(certificateId, tagId);
-        }
-    }
-
-    private Tag createCertificateTag(Tag tag) {
-        tagDao.create(tag);
-        Tag result = tagDao.findByName(tag.getName()).orElse(new Tag());
-        return result;
+        giftCertificate.setTagList(tagsToAdd);
+        return giftCertificateMapper.mapToDto(certificateRepository.create(giftCertificate));
     }
 
     @Override
     @Transactional
     public GiftCertificateDto findById(long id) throws NoSuchEntityException {
-        Optional<GiftCertificate> giftCertificateOptional = giftCertificateDao.findById(id);
-        if (giftCertificateOptional.isEmpty()) {
-            throw new NoSuchEntityException("certificate.not.found");
-        } else {
-            GiftCertificate giftCertificate = giftCertificateOptional.get();
-            addTagsInGiftCertificate(giftCertificate);
-            return mapper.mapToDto(giftCertificate);
-        }
+        GiftCertificate giftCertificate = certificateRepository.findById(id)
+                .orElseThrow(() -> new NoSuchEntityException("certificate.not.found"));
+        return giftCertificateMapper.mapToDto(giftCertificate);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = NoSuchEntityException.class)
     public GiftCertificateDto updateById(long id, UpdateGiftCertificateDto giftCertificateDto) throws NoSuchEntityException {
-        GiftCertificate giftCertificate = updateMapper.mapToEntity(giftCertificateDto);
-        if (giftCertificate != null) {
-            if (giftCertificateDao.findById(id).isEmpty()) {
-                throw new NoSuchEntityException("certificate.not.found");
-            }
-            giftCertificateDao.updateById(id, giftCertificate, false);
+        GiftCertificate giftCertificate = certificateRepository.findById(id)
+                .orElseThrow(() -> new NoSuchEntityException("certificate.not.found"));
+        GiftCertificate updateGiftCertificate = updateGiftCertificateMapper.mapToEntity(giftCertificateDto);
+        updateFields(giftCertificate, updateGiftCertificate);
+        if (giftCertificate.getTagList() != null) {
             List<Tag> tags = giftCertificate.getTagList();
-            if (tags != null) {
-                updateCertificateTags(tags, id);
-            }
+            giftCertificate.setTagList(addTags(tags));
         }
-        GiftCertificate newGiftCertificate = giftCertificateDao.findById(id).orElse(new GiftCertificate());
-        addTagsInGiftCertificate(newGiftCertificate);
-        return mapper.mapToDto(newGiftCertificate);
-    }
-
-    private void updateCertificateTags(List<Tag> tags, long certificateId) {
-        for (Tag tag : tags) {
-            String tagName = tag.getName();
-            Optional<Tag> tagOptional = tagDao.findByName(tagName);
-            Tag fullTag = tagOptional.orElseGet(() -> createCertificateTag(tag));
-            long tagId = fullTag.getId();
-            if (!giftCertificateDao.getTagIdsByCertificateId(certificateId).contains(tagId)) {
-                giftCertificateDao.createCertificateTagReference(certificateId, tagId);
-            }
-        }
+        return giftCertificateMapper.mapToDto(certificateRepository.update(giftCertificate));
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = NoSuchEntityException.class)
     public GiftCertificateDto replaceById(long id, GiftCertificateDto giftCertificateDto) throws NoSuchEntityException {
-        GiftCertificate giftCertificate = mapper.mapToEntity(giftCertificateDto);
-        if (giftCertificate != null) {
-            if (giftCertificateDao.findById(id).isEmpty()) {
-                throw new NoSuchEntityException("certificate.not.found");
-            }
-            giftCertificateDao.updateById(id, giftCertificate, true);
+        GiftCertificate giftCertificate = certificateRepository.findById(id)
+                .orElseThrow(() -> new NoSuchEntityException("certificate.not.found"));
+        GiftCertificate replaceGiftCertificate = giftCertificateMapper.mapToEntity(giftCertificateDto);
+        updateFields(giftCertificate, replaceGiftCertificate);
+        if (giftCertificate.getTagList() != null) {
             List<Tag> tags = giftCertificate.getTagList();
-            if (tags != null) {
-                replaceCertificateTags(tags, id);
-            }
+            giftCertificate.setTagList(addTags(tags));
         }
-        GiftCertificate newGiftCertificate = giftCertificateDao.findById(id).orElse(new GiftCertificate());
-        addTagsInGiftCertificate(newGiftCertificate);
-        return mapper.mapToDto(newGiftCertificate);
-    }
-
-    private void replaceCertificateTags(List<Tag> tags, long certificateId) {
-        List<Long> addedTagIds = new ArrayList<>();
-        for (Tag tag : tags) {
-            String tagName = tag.getName();
-            Optional<Tag> tagOptional = tagDao.findByName(tagName);
-            Tag fullTag = tagOptional.orElseGet(() -> createCertificateTag(tag));
-            long tagId = fullTag.getId();
-            addedTagIds.add(tagId);
-            if (!giftCertificateDao.getTagIdsByCertificateId(certificateId).contains(tagId)) {
-                giftCertificateDao.createCertificateTagReference(certificateId, tagId);
-            }
-        }
-        List<Long> allCertificateTagIdsList = giftCertificateDao.getTagIdsByCertificateId(certificateId);
-        for (long curTagId : allCertificateTagIdsList) {
-            if (!addedTagIds.contains(curTagId)) {
-                tagDao.deleteById(curTagId);
-            }
-        }
+        return giftCertificateMapper.mapToDto(certificateRepository.update(giftCertificate));
     }
 
     @Override
     @Transactional
     public void deleteById(long id) throws NoSuchEntityException {
-        Optional<GiftCertificate> certificateOptional = giftCertificateDao.findById(id);
-        if (certificateOptional.isEmpty()) {
-            throw new NoSuchEntityException("certificate.not.found");
-        }
-        giftCertificateDao.deleteById(id);
+        certificateRepository.findById(id).orElseThrow(() -> new NoSuchEntityException("certificate.not.found"));
+        certificateRepository.deleteById(id);
     }
 
     @Override
-    public List<GiftCertificateDto> findBySearchParams
-            (String tagName, String partName,
-             List<String> sortColumns, List<String> orderTypes) throws NoSuchEntityException {
-        List<GiftCertificateDto> giftCertificateDtoList = new ArrayList<>();
-        List<GiftCertificate> giftCertificates;
-        boolean isSortExist = sortColumns != null;
-        boolean isFilterExist = isFilterExist(tagName, partName);
+    @Transactional
+    public List<GiftCertificateDto> findBySearchParams(List<String> tagNames, String partName,
+                                                       List<String> sortColumns, List<String> orderTypes,
+                                                       int page, int size) {
         SortingParameters sortParameters = null;
-        if (isSortExist) {
+        if (sortColumns != null) {
             sortParameters = new SortingParameters(sortColumns, orderTypes);
             SortingParametersValidator.validateParams(sortParameters);
         }
-        if (isFilterExist) {
-            giftCertificates = findCertificatesWithFiltering(tagName, partName, sortParameters);
-        } else if (isSortExist) {
-            giftCertificates = giftCertificateDao.getWithSorting(sortParameters);
-        } else{
-            giftCertificates = giftCertificateDao.getAll();
-        }
-        for (GiftCertificate giftCertificate : giftCertificates) {
-            addTagsInGiftCertificate(giftCertificate);
-            giftCertificateDtoList.add(mapper.mapToDto(giftCertificate));
-        }
-        return giftCertificateDtoList;
+        return giftCertificateMapper.mapListToDto(
+                certificateRepository.getAllWithSortingFiltering(
+                        sortParameters, tagNames, partName, page, size));
     }
 
-    private void addTagsInGiftCertificate(GiftCertificate giftCertificate) {
-        List<Tag> tagList = new ArrayList<>();
-        List<Long> tagIds = giftCertificateDao.getTagIdsByCertificateId(giftCertificate.getId());
-        for (long tagId : tagIds) {
-            Optional<Tag> tagOptional = tagDao.findById(tagId);
-            tagOptional.ifPresent(tagList::add);
+    private List<Tag> addTags(List<Tag> tags) {
+        List<Tag> addedTags = new ArrayList<>();
+        for (Tag tag : tags) {
+            Optional<Tag> optionalTag = tagRepository.findByName(tag.getName());
+            Tag savedTag = optionalTag.orElseGet(() -> tagRepository.create(tag));
+            addedTags.add(savedTag);
         }
-        giftCertificate.setTagList(tagList);
+        return addedTags;
     }
 
-    private boolean isFilterExist(String tagName, String partInfo) {
-        return tagName != null || partInfo != null;
+    private void updateFields(GiftCertificate giftCertificate, GiftCertificate updateGiftCertificate) {
+        String name = updateGiftCertificate.getName();
+        if (name != null && !giftCertificate.getName().equals(name)) {
+            giftCertificate.setName(name);
+        }
+        String description = updateGiftCertificate.getDescription();
+        if (description != null && !giftCertificate.getDescription().equals(description)) {
+            giftCertificate.setDescription(description);
+        }
+        BigDecimal price = updateGiftCertificate.getPrice();
+        if (price != null && giftCertificate.getPrice().compareTo(price) != 0) {
+            giftCertificate.setPrice(price);
+        }
+        int duration = updateGiftCertificate.getDuration();
+        if (duration != 0 && giftCertificate.getDuration() != duration) {
+            giftCertificate.setDuration(duration);
+        }
     }
 
-    private List<GiftCertificate> findCertificatesWithFiltering
-            (String tagName, String partName, SortingParameters sortingParameters) throws NoSuchEntityException {
-        List<Long> certificateIdsByTagName = null;
-        if (tagName != null) {
-            certificateIdsByTagName = findCertificateIdsByTagName(tagName);
-        }
-        if (sortingParameters != null) {
-            return giftCertificateDao.getWithSortingAndFiltering(sortingParameters, certificateIdsByTagName, partName);
-        }
-        return giftCertificateDao.getWithFiltering(certificateIdsByTagName, partName);
-    }
-
-    private List<Long> findCertificateIdsByTagName(String tagName) throws NoSuchEntityException {
-        Optional<Tag> tag = tagDao.findByName(tagName);
-        if (tag.isEmpty()) {
-            throw new NoSuchEntityException("tag.not.found");
-        }
-        long tagId = tag.get().getId();
-        return giftCertificateDao.getCertificateIdsByTagId(tagId);
-    }
 }

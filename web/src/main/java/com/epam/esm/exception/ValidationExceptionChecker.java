@@ -7,21 +7,27 @@ import javax.validation.ValidationException;
 public class ValidationExceptionChecker {
 
     public static void checkDtoValidation(BindingResult bindingResult) {
-        StringBuilder exceptionMessage = new StringBuilder();
+        String exceptionMessage = "";
         if (bindingResult.hasErrors()) {
             if (bindingResult.hasFieldErrors("name")) {
-                exceptionMessage.append("validation.name");
+                exceptionMessage = "validation.name";
             }
             if (bindingResult.hasFieldErrors("description")) {
-                exceptionMessage.append("validation.description");
+                exceptionMessage ="validation.description";
             }
             if (bindingResult.hasFieldErrors("price")) {
-                exceptionMessage.append("validation.price");
+                exceptionMessage ="validation.price";
             }
-            if (bindingResult.hasFieldErrors("Duration")) {
-                exceptionMessage.append("validation.duration");
+            if (bindingResult.hasFieldErrors("duration")) {
+                exceptionMessage = "validation.duration";
             }
-            throw new ValidationException(exceptionMessage.toString());
+            if (bindingResult.hasFieldErrors("userId")) {
+                exceptionMessage = "validation.id";
+            }
+            if (bindingResult.hasFieldErrors("certificateId")) {
+                exceptionMessage ="validation.id";
+            }
+            throw new ValidationException(exceptionMessage);
         }
     }
 

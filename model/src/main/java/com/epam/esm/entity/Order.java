@@ -1,11 +1,12 @@
 package com.epam.esm.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 @Entity
-@Table(name = "order")
+@Table(name = "orders")
 public class Order extends AbstractEntity {
 
     @ManyToOne
@@ -13,18 +14,20 @@ public class Order extends AbstractEntity {
     private User user;
 
     @OneToOne
-    @JoinColumn(name="certificate_id", nullable = false)
+    @JoinColumn(name = "certificate_id", nullable = false)
     private GiftCertificate giftCertificate;
 
-    @Column(name = "date", nullable = false, updatable = false)
+    @Column(name = "order_date", nullable = false, updatable = false)
     private ZonedDateTime orderDate;
 
     @Column(nullable = false, updatable = false)
-    //todo проверка как в сертификате
+    @DecimalMin(value = "1", message = "Cost should be >= 1")
     private BigDecimal cost;
 
     public Order() {
     }
+
+
 
     @PrePersist
     public void onCreate() {

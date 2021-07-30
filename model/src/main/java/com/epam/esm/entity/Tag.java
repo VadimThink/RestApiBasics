@@ -5,8 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "tag")
-public class Tag extends AbstractEntity{
+@Table(name = "tags")
+public class Tag extends AbstractEntity {
 
     @Column(length = 50, nullable = false)
     private String name;

@@ -1,13 +1,18 @@
 package com.epam.esm.entity;
 
+import org.hibernate.annotations.BatchSize;
+
 import javax.persistence.*;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Min;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Entity
-@Table(name = "gift_certificate")
+@BatchSize(size = 25)
+@Table(name = "gift_certificates")
 public class GiftCertificate extends AbstractEntity {
 
     @Column(length = 50, nullable = false)
@@ -17,9 +22,9 @@ public class GiftCertificate extends AbstractEntity {
     private String description;
 
     @Column(nullable = false)
-    //todo min max из JPA
+    @DecimalMin(value = "1", message = "Price should be >= 1")
     private BigDecimal price;
-    //todo сюда тоже
+    @Min(value = 1, message = "Duration should be >= 1")
     @Column(nullable = false)
     private int duration;
 
@@ -30,13 +35,33 @@ public class GiftCertificate extends AbstractEntity {
     private ZonedDateTime lastUpdateDate;
 
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    @JoinTable(name="certificate_tags",
-            joinColumns = @JoinColumn(name="certificate_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name="tag_id", referencedColumnName = "id")
+    @BatchSize(size = 25)
+    @JoinTable(name = "certificates_tags",
+            joinColumns = @JoinColumn(name = "certificate_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id")
     )
     private List<Tag> tagList;
 
     public GiftCertificate() {
+    }
+
+    public GiftCertificate(String name, String description, BigDecimal price, int duration) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
+    }
+
+    public GiftCertificate(String name, String description, BigDecimal price,
+                           int duration, ZonedDateTime createDate,
+                           ZonedDateTime lastUpdateDate, List<Tag> tagList) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
+        this.createDate = createDate;
+        this.lastUpdateDate = lastUpdateDate;
+        this.tagList = tagList;
     }
 
     @PrePersist

@@ -2,6 +2,7 @@ package com.epam.esm.logic;
 
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.exception.DuplicateException;
+import com.epam.esm.exception.InvalidParametersException;
 import com.epam.esm.exception.NoSuchEntityException;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public interface TagService {
      *
      * @return the all
      */
-    List<TagDto> getAll();
+    List<TagDto> getAll(int page, int size) throws InvalidParametersException;
 
     /**
      * Gets by id.
@@ -41,5 +42,7 @@ public interface TagService {
      *
      * @param id the id
      */
-    void deleteById(long id);
+    void deleteById(long id) throws NoSuchEntityException;
+
+    TagDto findTheMostWidelyUsedTagOfUserWithTheHighestCostOfAllOrders() throws NoSuchEntityException;
 }

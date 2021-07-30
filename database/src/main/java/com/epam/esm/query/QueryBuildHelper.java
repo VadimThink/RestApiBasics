@@ -1,80 +1,81 @@
 package com.epam.esm.query;
 
-import org.springframework.stereotype.Component;
-
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Optional;
 
-@Component
 public class QueryBuildHelper {
-    private static final Pattern UPPER_CASE_SYMBOL_PATTERN = Pattern.compile("[A-Z]");
-    private static final String ANY_STRING_REGEX = "%";
 
-    public String buildUpdateColumnsQuery(Set<String> columns) {
-        StringBuilder queryBuilder = new StringBuilder();
-        boolean isFirstElement = true;
-        for (String column : columns) {
-            if (!isFirstElement) {
-                queryBuilder.append(", ");
+    private static final String REGEX_SYMBOL = "%";
+
+    private final CriteriaBuilder builder;
+
+    public QueryBuildHelper(CriteriaBuilder criteriaBuilder) {
+        this.builder = criteriaBuilder;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> Optional<T> getOptionalQueryResult(Query query) {
+        try {
+            T entity = (T) query.getSingleResult();
+            return Optional.of(entity);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    public Predicate buildAndPredicates(List<Predicate> predicates) {
+        if (predicates == null || predicates.isEmpty()) {
+            return null;
+        }
+        Predicate resultPredicate = predicates.get(0);
+        for (int i = 1; i < predicates.size(); i++) {
+            resultPredicate = builder.and(resultPredicate, predicates.get(i));
+        }
+        return resultPredicate;
+    }
+
+    public <T> Predicate buildOrEqualPredicates(Path<T> root, String columnName, List<?> values) {
+        int counter = 0;
+        Predicate predicate = null;
+        for (Object value : values) {
+            Predicate currentPredicate = builder.equal(root.get(columnName), value);
+            if (counter++ == 0) {
+                predicate = currentPredicate;
             } else {
-                isFirstElement = false;
+                predicate = builder.or(predicate, currentPredicate);
             }
-            queryBuilder.append(column);
-            queryBuilder.append("=?");
         }
-        return queryBuilder.toString();
+
+        return predicate;
     }
 
-    public String buildInFilteringQuery(String columnName, int amount) {
-        StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append(columnName).append(" IN(");
-        for (int i = 0; i < amount; i++) {
-            if (i != 0) {
-                queryBuilder.append(",");
+    public <T> List<Order> buildOrderList(Root<T> root, SortingParameters sortParameters) {
+        List<Order> orderList = new ArrayList<>();
+        for (int i = 0; i < sortParameters.getSortColumns().size(); i++) {
+            String column = sortParameters.getSortColumns().get(i);
+            String orderType;
+            if (sortParameters.getOrderTypes().size() > i) {
+                orderType = sortParameters.getOrderTypes().get(i);
+            } else {
+                orderType = "ASC";
             }
-            queryBuilder.append("?");
+            Order order;
+            if (orderType.equalsIgnoreCase("ASC")) {
+                order = builder.asc(root.get(column));
+            } else {
+                order = builder.desc(root.get(column));
+            }
+            orderList.add(order);
         }
-        queryBuilder.append(") ");
-        return queryBuilder.toString();
+        return orderList;
     }
 
-    public String buildSortingQuery(SortingParameters sortParameters) {
-        StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("ORDER BY ");
-        List<String> sortColumns = convertToDBFields(sortParameters.getSortColumns());
-        List<String> orderTypes = sortParameters.getOrderTypes();
-        int orderTypesSize = 0;
-        if (orderTypes != null){
-            orderTypesSize = orderTypes.size();
-        }
-        for (int i = 0; i < sortColumns.size(); i++) {
-            if (i != 0) {
-                queryBuilder.append(", ");
-            }
-            queryBuilder.append(sortColumns.get(i)).append(" ");
-            queryBuilder.append(i < orderTypesSize ? orderTypes.get(i) : "ASC");
-        }
-        return queryBuilder.toString();
-    }
-
-    private List<String> convertToDBFields(List<String> javaFields) {
-        List<String> DBFields = new ArrayList<>();
-        javaFields.forEach(fieldName -> {
-            Matcher matcher = UPPER_CASE_SYMBOL_PATTERN.matcher(fieldName);
-            while (matcher.find()) {
-                String matchedSymbol = matcher.group();
-                fieldName = fieldName.replaceAll(matchedSymbol, "_" + matchedSymbol.toLowerCase());
-            }
-            DBFields.add(fieldName);
-        });
-        return DBFields;
-    }
-
-    public String buildRegexValue(String value) {
-        return String.format("%s%s%s", ANY_STRING_REGEX, value, ANY_STRING_REGEX);
+    public String convertToRegex(String value) {
+        return REGEX_SYMBOL + value + REGEX_SYMBOL;
     }
 
 }
