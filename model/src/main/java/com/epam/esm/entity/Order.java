@@ -1,7 +1,5 @@
 package com.epam.esm.entity;
 
-import org.hibernate.annotations.BatchSize;
-
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
@@ -28,6 +26,8 @@ public class Order extends AbstractEntity {
 
     public Order() {
     }
+
+
 
     @PrePersist//todo в listener
     public void onCreate() {

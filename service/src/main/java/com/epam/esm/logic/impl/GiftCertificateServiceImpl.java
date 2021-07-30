@@ -68,7 +68,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = NoSuchEntityException.class)
     public GiftCertificateDto updateById(long id, UpdateGiftCertificateDto giftCertificateDto) throws NoSuchEntityException {
         GiftCertificate giftCertificate = certificateRepository.findById(id)
                 .orElseThrow(() -> new NoSuchEntityException("certificate.not.found"));
@@ -82,7 +82,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = NoSuchEntityException.class)
     public GiftCertificateDto replaceById(long id, GiftCertificateDto giftCertificateDto) throws NoSuchEntityException {
         GiftCertificate giftCertificate = certificateRepository.findById(id)
                 .orElseThrow(() -> new NoSuchEntityException("certificate.not.found"));
@@ -98,11 +98,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     @Transactional
     public void deleteById(long id) throws NoSuchEntityException {
-        Optional<GiftCertificate> certificateOptional = certificateRepository.findById(id);
-        if (!certificateOptional.isPresent()) {
-            throw new NoSuchEntityException("certificate.not.found");
-        }
-        //todo
+        certificateRepository.findById(id).orElseThrow(() -> new NoSuchEntityException("certificate.not.found"));
         certificateRepository.deleteById(id);
     }
 

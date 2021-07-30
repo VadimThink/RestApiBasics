@@ -9,7 +9,6 @@ import com.epam.esm.exception.DuplicateException;
 import com.epam.esm.exception.NoSuchEntityException;
 import com.epam.esm.logic.TagService;
 import com.epam.esm.mapper.TagMapper;
-import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,7 @@ public class TagServiceImpl implements TagService {
 
     @Autowired
     public TagServiceImpl(TagRepository tagRepository,
-                          UserRepository userRepository, OrderRepository orderRepository,
+                          UserRepository userRepository,
                           TagMapper tagMapper) {
         this.tagRepository = tagRepository;
         this.userRepository = userRepository;
@@ -37,7 +36,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = DuplicateException.class)
     public TagDto create(TagDto tagDto) throws DuplicateException {
         String tagName = tagDto.getName();
         boolean isTagExist = tagRepository.findByName(tagName).isPresent();
@@ -84,7 +83,7 @@ public class TagServiceImpl implements TagService {
                 .map(Map.Entry::getKey)
                 .orElseThrow(() -> new NoSuchEntityException("tag.list.is.empty"));
         return tagMapper.mapToDto(tagRepository.findById(theMostWidelyUsedTadId)
-                .orElseThrow(()->new NoSuchEntityException("tag.not.found")));
+                .orElseThrow(() -> new NoSuchEntityException("tag.not.found")));
     }
 
     /*public static final String MOST_WIDELY_USED_TAG_QUERY =

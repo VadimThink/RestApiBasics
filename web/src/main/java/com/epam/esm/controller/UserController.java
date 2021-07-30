@@ -2,14 +2,18 @@ package com.epam.esm.controller;
 
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.exception.DuplicateException;
 import com.epam.esm.exception.InvalidParametersException;
 import com.epam.esm.exception.NoSuchEntityException;
+import com.epam.esm.exception.ValidationExceptionChecker;
 import com.epam.esm.link.OrderLinkProvider;
 import com.epam.esm.link.UserLinkProvider;
 import com.epam.esm.logic.OrderService;
 import com.epam.esm.logic.UserService;
+import com.epam.esm.validation.RequestParametersValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -38,8 +42,9 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto create(@RequestBody @Valid UserDto userDto) {
-        //todo validation
+    public UserDto create(@RequestBody @Valid UserDto userDto, BindingResult bindingResult)
+            throws DuplicateException {
+        ValidationExceptionChecker.checkDtoValidation(bindingResult);
         UserDto newUserDto = userService.create(userDto);
         userLinkProvider.provideLinks(newUserDto);
         return newUserDto;
@@ -47,8 +52,11 @@ public class UserController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<UserDto> getAll(@RequestParam(value = PAGE, required = false, defaultValue = DEFAULT_PAGE) int page,
-                                @RequestParam(value = SIZE, required = false, defaultValue = DEFAULT_SIZE) int size) throws InvalidParametersException {
+    public List<UserDto> getAll(
+            @RequestParam(value = PAGE, required = false, defaultValue = DEFAULT_PAGE) int page,
+            @RequestParam(value = SIZE, required = false, defaultValue = DEFAULT_SIZE) int size)
+            throws InvalidParametersException {
+        RequestParametersValidator.validatePaginationParams(page, size);
         List<UserDto> userDtoList = userService.getAll(page, size);
         return userDtoList.stream()
                 .peek(userLinkProvider::provideLinks)
@@ -58,6 +66,7 @@ public class UserController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public UserDto getById(@PathVariable long id) throws NoSuchEntityException {
+        RequestParametersValidator.validateId(id);
         UserDto userDto = userService.getById(id);
         userLinkProvider.provideLinks(userDto);
         return userDto;
@@ -65,10 +74,13 @@ public class UserController {
 
     @GetMapping("/{id}/orders")
     @ResponseStatus(HttpStatus.OK)
-    public List<OrderDto> getOrdersByUserId(@PathVariable long id,
-                                            @RequestParam(value = PAGE, required = false, defaultValue = DEFAULT_PAGE) int page,
-                                            @RequestParam(value = SIZE, required = false, defaultValue = DEFAULT_SIZE) int size)
+    public List<OrderDto> getOrdersByUserId(
+            @PathVariable long id,
+            @RequestParam(value = PAGE, required = false, defaultValue = DEFAULT_PAGE) int page,
+            @RequestParam(value = SIZE, required = false, defaultValue = DEFAULT_SIZE) int size)
             throws InvalidParametersException, NoSuchEntityException {
+        RequestParametersValidator.validateId(id);
+        RequestParametersValidator.validatePaginationParams(page, size);
         List<OrderDto> orderDtoList = orderService.getAllByUserId(id, page, size);
         return orderDtoList.stream()
                 .peek(orderLinkProvider::provideLinks)
@@ -77,9 +89,12 @@ public class UserController {
 
     @GetMapping("/{id}/orders/{orderId}")
     @ResponseStatus(HttpStatus.OK)
-    public OrderDto getOrderByUserId(@PathVariable(value = "id") long id,
-                                     @PathVariable(value = "orderId") long orderId)
+    public OrderDto getOrderByUserId(
+            @PathVariable(value = "id") long id,
+            @PathVariable(value = "orderId") long orderId)
             throws NoSuchEntityException {
+        RequestParametersValidator.validateId(id);
+        RequestParametersValidator.validateId(orderId);
         OrderDto orderDto = orderService.getByUserId(id, orderId);
         orderLinkProvider.provideLinks(orderDto);
         return orderDto;

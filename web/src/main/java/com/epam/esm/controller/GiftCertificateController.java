@@ -8,6 +8,7 @@ import com.epam.esm.exception.NoSuchEntityException;
 import com.epam.esm.exception.ValidationExceptionChecker;
 import com.epam.esm.link.GiftCertificateLinkProvider;
 import com.epam.esm.logic.GiftCertificateService;
+import com.epam.esm.validation.RequestParametersValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
@@ -55,8 +56,9 @@ public class GiftCertificateController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public GiftCertificateDto create(@RequestBody @Valid GiftCertificateDto giftCertificateDto,
-                                     BindingResult bindingResult) throws DuplicateException, NoSuchEntityException {
+    public GiftCertificateDto create(
+            @RequestBody @Valid GiftCertificateDto giftCertificateDto,
+            BindingResult bindingResult) throws DuplicateException, NoSuchEntityException {
         ValidationExceptionChecker.checkDtoValidation(bindingResult);
         GiftCertificateDto newGiftCertificateDto = giftCertificateService.create(giftCertificateDto);
         giftCertificateLinkProvider.provideLinks(newGiftCertificateDto);
@@ -72,7 +74,8 @@ public class GiftCertificateController {
      */
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public GiftCertificateDto getById(@PathVariable("id") long id) throws NoSuchEntityException {
+    public GiftCertificateDto getById(@PathVariable(ID_PATH_VARIABLE) long id) throws NoSuchEntityException {
+        RequestParametersValidator.validateId(id);
         GiftCertificateDto giftCertificateDto = giftCertificateService.findById(id);
         giftCertificateLinkProvider.provideLinks(giftCertificateDto);
         return giftCertificateDto;
@@ -81,17 +84,19 @@ public class GiftCertificateController {
     /**
      * Update by id gift certificate dto.
      *
-     * @param id                 the id
+     * @param id                       the id
      * @param updateGiftCertificateDto the gift certificate dto
-     * @param bindingResult      the binding result
+     * @param bindingResult            the binding result
      * @return the gift certificate dto
      * @throws NoSuchEntityException the no such entity exception
      */
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public GiftCertificateDto updateById(@PathVariable("id") long id,
-                                         @RequestBody @Valid UpdateGiftCertificateDto updateGiftCertificateDto,
-                                         BindingResult bindingResult) throws NoSuchEntityException {
+    public GiftCertificateDto updateById(
+            @PathVariable(ID_PATH_VARIABLE) long id,
+            @RequestBody @Valid UpdateGiftCertificateDto updateGiftCertificateDto,
+            BindingResult bindingResult) throws NoSuchEntityException {
+        RequestParametersValidator.validateId(id);
         ValidationExceptionChecker.checkDtoValidation(bindingResult);
         GiftCertificateDto giftCertificateDto = giftCertificateService.updateById(id, updateGiftCertificateDto);
         giftCertificateLinkProvider.provideLinks(giftCertificateDto);
@@ -109,9 +114,11 @@ public class GiftCertificateController {
      */
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public GiftCertificateDto replaceById(@PathVariable("id") long id,
-                                          @RequestBody @Valid GiftCertificateDto giftCertificateDto,
-                                          BindingResult bindingResult) throws NoSuchEntityException {
+    public GiftCertificateDto replaceById(
+            @PathVariable(ID_PATH_VARIABLE) long id,
+            @RequestBody @Valid GiftCertificateDto giftCertificateDto,
+            BindingResult bindingResult) throws NoSuchEntityException {
+        RequestParametersValidator.validateId(id);
         ValidationExceptionChecker.checkDtoValidation(bindingResult);
         GiftCertificateDto replacedDto = giftCertificateService.replaceById(id, giftCertificateDto);
         giftCertificateLinkProvider.provideLinks(replacedDto);
@@ -126,7 +133,8 @@ public class GiftCertificateController {
      */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(@PathVariable("id") long id) throws NoSuchEntityException {
+    public void deleteById(@PathVariable(ID_PATH_VARIABLE) long id) throws NoSuchEntityException {
+        RequestParametersValidator.validateId(id);
         giftCertificateService.deleteById(id);
     }
 
@@ -152,6 +160,7 @@ public class GiftCertificateController {
             @RequestParam(name = PAGE, required = false, defaultValue = DEFAULT_PAGE) int page,
             @RequestParam(name = SIZE, required = false, defaultValue = DEFAULT_SIZE) int size)
             throws NoSuchEntityException, InvalidParametersException {
+        RequestParametersValidator.validatePaginationParams(page, size);
         List<GiftCertificateDto> giftCertificateDtos = giftCertificateService.findBySearchParams(tagNames, partName, sortColumns, orderTypes, page, size);
         return giftCertificateDtos.stream()
                 .peek(giftCertificateLinkProvider::provideLinks)

@@ -1,5 +1,6 @@
 package com.epam.esm.logic.impl;
 
+import com.epam.esm.dto.CreateOrderDto;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
@@ -38,16 +39,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional
-    public OrderDto create(long userId, long certificateId) throws NoSuchEntityException {
+    @Transactional(rollbackFor = NoSuchEntityException.class)
+    public OrderDto create(CreateOrderDto createOrderDto) throws NoSuchEntityException {
         Order order = new Order();
-        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchEntityException("user.not.found"));
+        User user = userRepository.findById(createOrderDto.getUserId()).orElseThrow(() -> new NoSuchEntityException("user.not.found"));
         order.setUser(user);
-        GiftCertificate certificate = certificateRepository.findById(certificateId)
+        GiftCertificate certificate = certificateRepository.findById(createOrderDto.getCertificateId())
                 .orElseThrow(() -> new NoSuchEntityException("certificate.not.found"));
         order.setGiftCertificate(certificate);
         order.setCost(certificate.getPrice());
-        userService.addSpentMoney(userId, order.getCost());
+        userService.addSpentMoney(createOrderDto.getUserId(), order.getCost());
         return orderMapper.mapToDto(orderRepository.create(order));
     }
 

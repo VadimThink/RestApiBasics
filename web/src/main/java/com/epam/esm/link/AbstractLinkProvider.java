@@ -15,7 +15,7 @@ public abstract class AbstractLinkProvider<T extends RepresentationModel<T>> imp
         dto.add(linkTo(controllerClass).slash(id).withRel(linkName));
     }
 
-    protected void provideIdLinks(Class<?> controllerClass, T dto, long id, String ...linkNames) {
+    protected void provideIdLinks(Class<?> controllerClass, T dto, long id, String... linkNames) {
         for (String linkName : linkNames) {
             provideIdLink(controllerClass, dto, id, linkName);
         }

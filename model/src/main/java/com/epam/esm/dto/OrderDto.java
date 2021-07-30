@@ -1,6 +1,5 @@
 package com.epam.esm.dto;
 
-import com.epam.esm.entity.Order;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.math.BigDecimal;

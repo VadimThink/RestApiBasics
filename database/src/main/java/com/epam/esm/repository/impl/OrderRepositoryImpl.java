@@ -33,14 +33,14 @@ public class OrderRepositoryImpl extends AbstractRepository<Order> implements Or
     }
 
     @Override
-    public List<Order> getAllByUserId(long userId){
+    public List<Order> getAllByUserId(long userId) {
         CriteriaQuery<Order> query = buildGetAllQuery(userId);
 
         return entityManager.createQuery(query)
                 .getResultList();
     }
 
-    private CriteriaQuery<Order> buildGetAllQuery(long userId){
+    private CriteriaQuery<Order> buildGetAllQuery(long userId) {
         CriteriaQuery<Order> query = builder.createQuery(Order.class);
         Root<Order> root = query.from(Order.class);
         query.select(root);

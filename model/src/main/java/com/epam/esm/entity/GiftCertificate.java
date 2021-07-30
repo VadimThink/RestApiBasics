@@ -8,6 +8,7 @@ import javax.validation.constraints.Min;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -43,6 +44,25 @@ public class GiftCertificate extends AbstractEntity {
     private List<Tag> tagList;
 
     public GiftCertificate() {
+    }
+
+    public GiftCertificate(String name, String description, BigDecimal price, int duration) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
+    }
+
+    public GiftCertificate(String name, String description, BigDecimal price,
+                           int duration, ZonedDateTime createDate,
+                           ZonedDateTime lastUpdateDate, List<Tag> tagList) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
+        this.createDate = createDate;
+        this.lastUpdateDate = lastUpdateDate;
+        this.tagList = tagList;
     }
 
     @PrePersist//todo переместить в listener

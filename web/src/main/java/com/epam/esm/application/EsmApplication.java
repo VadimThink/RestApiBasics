@@ -8,7 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
 @SpringBootApplication
-@ComponentScan(basePackages = "com.epam.esm")
+@ComponentScan(basePackages = "com.epam")
 @EntityScan(basePackages = "com.epam.esm.entity")
 public class EsmApplication {
 
@@ -19,7 +19,7 @@ public class EsmApplication {
     @Bean
     public ResourceBundleMessageSource getResourceBundleMessageSource() {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.addBasenames("/errorMessage");
+        messageSource.addBasenames("errorMessage");
         messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
     }

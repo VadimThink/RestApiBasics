@@ -2,6 +2,7 @@ package com.epam.esm.logic.impl;
 
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.entity.User;
+import com.epam.esm.exception.DuplicateException;
 import com.epam.esm.exception.NoSuchEntityException;
 import com.epam.esm.logic.UserService;
 import com.epam.esm.mapper.UserMapper;
@@ -27,8 +28,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto create(UserDto userDto) {
+    public UserDto create(UserDto userDto) throws DuplicateException {
         User user = userMapper.mapToEntity(userDto);
+        if (userRepository.findByField("name", user.getName()).isPresent())
+            throw new DuplicateException("user.exist");
         return userMapper.mapToDto(userRepository.create(user));
     }
 

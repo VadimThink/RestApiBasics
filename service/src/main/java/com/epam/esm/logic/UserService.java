@@ -1,6 +1,7 @@
 package com.epam.esm.logic;
 
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.exception.DuplicateException;
 import com.epam.esm.exception.InvalidParametersException;
 import com.epam.esm.exception.NoSuchEntityException;
 
@@ -15,7 +16,7 @@ public interface UserService {
      * @param userDto User to create
      * @return created User
      */
-    UserDto create(UserDto userDto);
+    UserDto create(UserDto userDto) throws DuplicateException;
 
     /**
      * Gets all Users.

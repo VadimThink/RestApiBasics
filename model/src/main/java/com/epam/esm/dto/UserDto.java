@@ -2,12 +2,16 @@ package com.epam.esm.dto;
 
 import org.springframework.hateoas.RepresentationModel;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
 public class UserDto extends RepresentationModel<UserDto> {
 
     private int id;
 
+    @NotEmpty
+    @Size(min = 1, max = 50, message = "Name length should be >= 1, and <= 50")
     private String name;
 
     private BigDecimal spentMoney;

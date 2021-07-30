@@ -1,5 +1,8 @@
 package com.epam.esm.exception;
 
+/**
+ * this class may be needed later
+ **/
 public class InvalidParametersException extends Throwable {
 
     public InvalidParametersException() {

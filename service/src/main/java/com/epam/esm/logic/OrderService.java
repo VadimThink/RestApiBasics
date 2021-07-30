@@ -1,5 +1,6 @@
 package com.epam.esm.logic;
 
+import com.epam.esm.dto.CreateOrderDto;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.exception.InvalidParametersException;
 import com.epam.esm.exception.NoSuchEntityException;
@@ -8,15 +9,7 @@ import java.util.List;
 
 public interface OrderService {
 
-    /**
-     * Creates new Order.
-     *
-     * @param userId        user id who creates Order
-     * @param certificateId certificate to order
-     * @return created Order
-     * @throws NoSuchEntityException when User or Certificate not found
-     */
-    OrderDto create(long userId, long certificateId) throws NoSuchEntityException;
+    OrderDto create(CreateOrderDto createOrderDto) throws NoSuchEntityException;
 
     /**
      * Gets all Orders by user id.
