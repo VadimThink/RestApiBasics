@@ -6,11 +6,8 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.validation.ValidationException;
 import java.util.Arrays;
@@ -62,22 +59,22 @@ public class ExceptionAdviser {
         return buildErrorResponse(resolveResourceBundle(e.getMessage(), locale), 40600, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(MissingServletRequestParameterException.class)
+    /*@ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ExceptionInfo> handleMissingRequestParameterException
             (MissingServletRequestParameterException e) {
         return buildErrorResponse(e.getMessage(), 40002, HttpStatus.BAD_REQUEST);
-    }
+    }*/
 
     @ExceptionHandler(TypeMismatchException.class)
     public ResponseEntity<ExceptionInfo> handleTypeMismatchException(TypeMismatchException e) {
         return buildErrorResponse(e.getMessage(), 40000, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    /*@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ExceptionInfo> handleMethodNotSupportedException(
             HttpRequestMethodNotSupportedException e) {
         return buildErrorResponse(e.getMessage(), 40500, HttpStatus.METHOD_NOT_ALLOWED);
-    }
+    }*/
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ExceptionInfo> handleNotReadableBodyException(Locale locale) {
@@ -85,10 +82,10 @@ public class ExceptionAdviser {
         return buildErrorResponse(resolveResourceBundle(message, locale), 40001, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(NoHandlerFoundException.class)
+    /*@ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<ExceptionInfo> handleNoFoundException(NoHandlerFoundException e) {
         return buildErrorResponse(e.getMessage(), 40400, HttpStatus.NOT_FOUND);
-    }
+    }*/
 
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<ExceptionInfo> handleOtherExceptions(Exception e) {

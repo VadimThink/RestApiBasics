@@ -1,24 +1,17 @@
 package com.epam.esm.entity;
 
-public class Tag {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
-    private long id;
+@Entity
+@Table(name = "tag")
+public class Tag extends AbstractEntity{
+
+    @Column(length = 50, nullable = false)
     private String name;
 
-    public Tag(long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
     public Tag() {
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -36,22 +29,19 @@ public class Tag {
 
         Tag tag = (Tag) o;
 
-        if (id != tag.id) return false;
         return name != null ? name.equals(tag.name) : tag.name == null;
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        return result;
+        return name != null ? name.hashCode() : 0;
     }
 
     @Override
     public String toString() {
         return "Tag{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
+                "name='" + name + '\'' +
+                ", id=" + getId() +
                 '}';
     }
 }

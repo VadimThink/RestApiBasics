@@ -1,64 +1,53 @@
 package com.epam.esm.entity;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
-public class GiftCertificate {
-    private long id;
+@Entity
+@Table(name = "gift_certificate")
+public class GiftCertificate extends AbstractEntity {
+
+    @Column(length = 50, nullable = false)
     private String name;
+
+    @Column(length = 100, nullable = false)
     private String description;
+
+    @Column(nullable = false)
+    //todo min max из JPA
     private BigDecimal price;
+    //todo сюда тоже
+    @Column(nullable = false)
     private int duration;
+
+    @Column(name = "create_date", nullable = false, updatable = false)
     private ZonedDateTime createDate;
+
+    @Column(name = "last_update_date", nullable = false)
     private ZonedDateTime lastUpdateDate;
+
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinTable(name="certificate_tags",
+            joinColumns = @JoinColumn(name="certificate_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name="tag_id", referencedColumnName = "id")
+    )
     private List<Tag> tagList;
-
-    public GiftCertificate(long id, String name,
-                           String description, BigDecimal price, int duration,
-                           ZonedDateTime createDate, ZonedDateTime lastUpdateDate) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.duration = duration;
-        this.createDate = createDate;
-        this.lastUpdateDate = lastUpdateDate;
-    }
-
-    public GiftCertificate(long id, String name,
-                           String description, BigDecimal price, int duration) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.duration = duration;
-    }
 
     public GiftCertificate() {
     }
 
-    public GiftCertificate(long id, String name, String description,
-                           BigDecimal price, int duration, ZonedDateTime createDate,
-                           ZonedDateTime lastUpdateDate, List<Tag> tagList) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.duration = duration;
-        this.createDate = createDate;
-        this.lastUpdateDate = lastUpdateDate;
-        this.tagList = tagList;
+    @PrePersist
+    protected void onCreate() {
+        this.createDate = ZonedDateTime.now();
+        this.lastUpdateDate = createDate;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
+    @PreUpdate
+    protected void onUpdate() {
+        this.lastUpdateDate = ZonedDateTime.now();
     }
 
     public String getName() {
@@ -113,9 +102,6 @@ public class GiftCertificate {
         this.lastUpdateDate = lastUpdateDate;
     }
 
-    public void setLastUpdateDate(String lastUpdateDate) {
-        this.lastUpdateDate = ZonedDateTime.parse(lastUpdateDate, DateTimeFormatter.ISO_DATE_TIME);
-    }
 
     public List<Tag> getTagList() {
         return tagList;
@@ -125,12 +111,6 @@ public class GiftCertificate {
         this.tagList = tagList;
     }
 
-    public void addTag(Tag tag) {
-        if (tagList == null) {
-            tagList = new ArrayList<>();
-        }
-        tagList.add(tag);
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -139,21 +119,19 @@ public class GiftCertificate {
 
         GiftCertificate that = (GiftCertificate) o;
 
-        if (id != that.id) return false;
         if (duration != that.duration) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (description != null ? !description.equals(that.description) : that.description != null) return false;
         if (price != null ? !price.equals(that.price) : that.price != null) return false;
-        //if (createDate != null ? !createDate.equals(that.createDate) : that.createDate != null) return false;
-        //if (lastUpdateDate != null ? !lastUpdateDate.equals(that.lastUpdateDate) : that.lastUpdateDate != null)
-        //return false;
+        if (createDate != null ? !createDate.equals(that.createDate) : that.createDate != null) return false;
+        if (lastUpdateDate != null ? !lastUpdateDate.equals(that.lastUpdateDate) : that.lastUpdateDate != null)
+            return false;
         return tagList != null ? tagList.equals(that.tagList) : that.tagList == null;
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (name != null ? name.hashCode() : 0);
+        int result = name != null ? name.hashCode() : 0;
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (price != null ? price.hashCode() : 0);
         result = 31 * result + duration;
@@ -166,14 +144,14 @@ public class GiftCertificate {
     @Override
     public String toString() {
         return "GiftCertificate{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
+                "name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", duration=" + duration +
                 ", createDate=" + createDate +
                 ", lastUpdateDate=" + lastUpdateDate +
                 ", tagList=" + tagList +
+                ", id=" + getId() +
                 '}';
     }
 }
