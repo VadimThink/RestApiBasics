@@ -2,6 +2,7 @@ package com.epam.esm.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
@@ -10,7 +11,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UpdateGiftCertificateDto {
+public class UpdateGiftCertificateDto extends RepresentationModel<UpdateGiftCertificateDto> {
 
     private long id;
     @Size(max = 50, message = "Name length should be <= 50")

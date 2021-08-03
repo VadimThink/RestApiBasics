@@ -1,9 +1,11 @@
 package com.epam.esm.dto;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
-public class TagDto {
+public class TagDto extends RepresentationModel<TagDto> {
 
     private long id;
     @Size(min = 1, max = 50, message = "Name length should be >= 1, and <= 50")

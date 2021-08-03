@@ -3,6 +3,7 @@ package com.epam.esm.logic;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.UpdateGiftCertificateDto;
 import com.epam.esm.exception.DuplicateException;
+import com.epam.esm.exception.InvalidParametersException;
 import com.epam.esm.exception.NoSuchEntityException;
 
 import java.util.List;
@@ -62,13 +63,14 @@ public interface GiftCertificateService {
     /**
      * Gets by search params.
      *
-     * @param tagName     the tag name
+     * @param tagNames    the tag name
      * @param partName    the part name
      * @param sortColumns the sort columns
      * @param orderTypes  the order types
      * @return the by search params
      * @throws NoSuchEntityException the no such entity exception
      */
-    List<GiftCertificateDto> findBySearchParams(String tagName, String partName,
-                                                List<String> sortColumns, List<String> orderTypes) throws NoSuchEntityException;
+    List<GiftCertificateDto> findBySearchParams(List<String> tagNames, String partName,
+                                                List<String> sortColumns, List<String> orderTypes,
+                                                int page, int size) throws NoSuchEntityException, InvalidParametersException;
 }

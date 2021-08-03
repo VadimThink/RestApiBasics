@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.epam.esm.dao.constant.ColumnNames.*;
+import static com.epam.esm.constant.ColumnNames.*;
 
 public class SortingParametersValidator {
     private static final List<String> availableColumns = new ArrayList<>(

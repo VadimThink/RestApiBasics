@@ -2,26 +2,29 @@ package com.epam.esm.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.hateoas.RepresentationModel;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GiftCertificateDto {
+
+public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> {
 
     private long id;
     @Size(min = 1, max = 50, message = "Name length should be >= 1, and <= 50")
     @NotEmpty(message = "Name should not be empty")
     private String name;
     @Size(min = 1, max = 100, message = "Description length should be >= 1, and <= 100")
+    @NotEmpty(message = "Description should`nt be empty")
     private String description;
-    @Min(value = 1, message = "Price should be >= 1")
+    @DecimalMin(value = "1", message = "Price should be >= 1")
+    @NotNull
     private BigDecimal price;
     @Min(value = 1, message = "Duration should be >= 1")
+    @NotNull
     private int duration;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX")
@@ -48,6 +51,13 @@ public class GiftCertificateDto {
         this.createDate = createDate;
         this.lastUpdateDate = lastUpdateDate;
         this.tagList = tagList;
+    }
+
+    public GiftCertificateDto(String name, String description, BigDecimal price, int duration) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
     }
 
     public long getId() {
