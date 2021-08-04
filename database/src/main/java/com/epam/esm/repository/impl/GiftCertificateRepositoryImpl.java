@@ -58,7 +58,7 @@ public class GiftCertificateRepositoryImpl extends AbstractRepository<GiftCertif
     }
 
     private Predicate buildPredicateByTagName(Root<GiftCertificate> root, List<String> tagNames) {
-        Join<GiftCertificate, Tag> tagsJoin = root.join("tags");
+        Join<GiftCertificate, Tag> tagsJoin = root.join("tagList");
 
         return queryBuildHelper.buildOrEqualPredicates(tagsJoin, "name", tagNames);
     }
