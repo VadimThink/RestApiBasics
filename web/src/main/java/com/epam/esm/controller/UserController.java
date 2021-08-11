@@ -45,7 +45,7 @@ public class UserController {
     public UserDto create(@RequestBody @Valid UserDto userDto, BindingResult bindingResult)
             throws DuplicateException {
         ValidationExceptionChecker.checkDtoValidation(bindingResult);
-        UserDto newUserDto = userService.create(userDto);
+        UserDto newUserDto = userService.register(userDto);
         userLinkProvider.provideLinks(newUserDto);
         return newUserDto;
     }

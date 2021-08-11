@@ -6,4 +6,6 @@ public interface UserRepository extends CrudRepository<User> {
 
     User findUserWithMaxSpentMoney();
 
+    void delete(User user);
+
 }

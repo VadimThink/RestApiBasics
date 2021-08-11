@@ -1,5 +1,6 @@
 package com.epam.esm.repository.impl;
 
+import com.epam.esm.constant.Status;
 import com.epam.esm.entity.User;
 import com.epam.esm.repository.AbstractRepository;
 import com.epam.esm.repository.UserRepository;
@@ -33,4 +34,12 @@ public class UserRepositoryImpl extends AbstractRepository<User> implements User
         query.where(predicate);
         return entityManager.createQuery(query).getSingleResult();
     }
+
+    @Override
+    public void delete(User user) {
+        user.setStatus(Status.DELETED);
+        entityManager.merge(user);
+    }
+
+
 }

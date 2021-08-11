@@ -56,7 +56,7 @@ public class UserServiceImplTest {
         when(userRepository.findByField("name", USER.getName())).thenReturn(Optional.empty());
         when(userRepository.create(USER)).thenReturn(USER);
         when(userMapper.mapToDto(USER)).thenReturn(USER_DTO);
-        assertNotNull(userService.create(USER_DTO));
+        assertNotNull(userService.register(USER_DTO));
     }
 
     @Test

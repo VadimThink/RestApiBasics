@@ -4,19 +4,12 @@ import com.epam.esm.dto.UserDto;
 import com.epam.esm.exception.DuplicateException;
 import com.epam.esm.exception.InvalidParametersException;
 import com.epam.esm.exception.NoSuchEntityException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 public interface UserService {
-
-    /**
-     * Creates new User.
-     *
-     * @param userDto User to create
-     * @return created User
-     */
-    UserDto create(UserDto userDto) throws DuplicateException;
 
     /**
      * Gets all Users.
@@ -37,8 +30,12 @@ public interface UserService {
      */
     UserDto getById(long id) throws NoSuchEntityException;
 
+    UserDto getByLogin(String login) throws NoSuchEntityException;
+
     void addSpentMoney(long id, BigDecimal addedValue) throws NoSuchEntityException;
 
-    UserDto findUserWithMaxSpentMoney();
+    UserDto register(UserDto userDto);
+
+    void delete(long id);
 
 }
