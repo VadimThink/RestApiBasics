@@ -10,8 +10,9 @@ public class Role extends AbstractEntity {
     @Column(name = "name")
     private String name;
 
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
-    private List<User> users;
+    public Role(String name) {
+        this.name = name;
+    }
 
     public Role() {
     }
@@ -24,14 +25,6 @@ public class Role extends AbstractEntity {
         this.name = name;
     }
 
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -39,22 +32,18 @@ public class Role extends AbstractEntity {
 
         Role role = (Role) o;
 
-        if (name != null ? !name.equals(role.name) : role.name != null) return false;
-        return users != null ? users.equals(role.users) : role.users == null;
+        return name != null ? name.equals(role.name) : role.name == null;
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (users != null ? users.hashCode() : 0);
-        return result;
+        return name != null ? name.hashCode() : 0;
     }
 
     @Override
     public String toString() {
         return "Role{" +
                 "name='" + name + '\'' +
-                ", users=" + users +
                 '}';
     }
 }

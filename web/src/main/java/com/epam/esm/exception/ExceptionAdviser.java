@@ -1,11 +1,13 @@
 package com.epam.esm.exception;
 
+import com.epam.esm.dto.ExceptionInfo;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -32,7 +34,7 @@ public class ExceptionAdviser {
     }
 
     @ExceptionHandler(DuplicateException.class)
-    public ResponseEntity<ExceptionInfo> handleDuplicateEntityException(DuplicateException e,Locale locale) {
+    public ResponseEntity<ExceptionInfo> handleDuplicateEntityException(DuplicateException e, Locale locale) {
         return buildErrorResponse(resolveResourceBundle(e.getMessage(), locale),
                 40901, HttpStatus.CONFLICT);
     }
@@ -94,6 +96,20 @@ public class ExceptionAdviser {
                                                                      Locale locale) {
         return buildErrorResponse(resolveResourceBundle(e.getMessage(), locale),
                 40401, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(AuthorizationServiceException.class)
+    public ResponseEntity<ExceptionInfo> handleAuthorizationServiceException(AuthorizationServiceException e,
+                                                                             Locale locale){
+        return buildErrorResponse(resolveResourceBundle(e.getMessage(), locale),
+                40003, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(JwtAuthenticationException.class)
+    public ResponseEntity<ExceptionInfo> handleJwtAuthenticationException(JwtAuthenticationException e,
+                                                                          Locale locale){
+        return buildErrorResponse(resolveResourceBundle(e.getMessage(), locale),
+                40001, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(Throwable.class)

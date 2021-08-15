@@ -21,7 +21,7 @@ public interface GiftCertificateService {
      * @throws DuplicateException    the duplicate exception
      * @throws NoSuchEntityException the no such entity exception
      */
-    GiftCertificateDto create(GiftCertificateDto giftCertificateDto) throws DuplicateException, NoSuchEntityException;
+    GiftCertificateDto create(GiftCertificateDto giftCertificateDto) throws NoSuchEntityException;
 
     /**
      * Gets by id.

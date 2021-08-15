@@ -4,6 +4,7 @@ import com.epam.esm.constant.Status;
 import com.epam.esm.entity.Role;
 import org.springframework.hateoas.RepresentationModel;
 
+import javax.persistence.PrePersist;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -33,7 +34,6 @@ public class UserDto extends RepresentationModel<UserDto> {
     @Email
     private String email;
 
-    @NotEmpty
     private Status status;
 
     private Set<Role> roles = new HashSet<>();

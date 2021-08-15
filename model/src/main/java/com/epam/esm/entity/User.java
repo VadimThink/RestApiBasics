@@ -33,7 +33,7 @@ public class User extends AbstractEntity {
     @Column(name = "status")
     private Status status;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
@@ -49,6 +49,7 @@ public class User extends AbstractEntity {
     @PrePersist
     protected void onCreate() {
         spentMoney = BigDecimal.ZERO;
+        status = Status.ACTIVE;
     }
 
     public String getName() {

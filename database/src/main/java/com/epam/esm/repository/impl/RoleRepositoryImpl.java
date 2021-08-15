@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.util.Optional;
 
 @Repository
 public class RoleRepositoryImpl extends AbstractRepository<Role> implements RoleRepository {
@@ -17,7 +18,7 @@ public class RoleRepositoryImpl extends AbstractRepository<Role> implements Role
     }
 
     @Override
-    public Role findByName(String name) {
-        return null;
+    public Optional<Role> findByName(String name) {
+        return findByField("name", name);
     }
 }

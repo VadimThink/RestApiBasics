@@ -1,24 +1,22 @@
-package com.epam.esm.security;
+package com.epam.esm.config;
 
 import com.epam.esm.security.jwt.JwtConfigurer;
 import com.epam.esm.security.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static com.epam.esm.constant.Endpoints.ADMIN_ENDPOINT;
-import static com.epam.esm.constant.Endpoints.LOGIN_ENDPOINT;
+import static com.epam.esm.constant.Endpoints.*;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String ADMIN = "ADMIN";
+    private static final String USER = "USER";
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -29,7 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception{
+    public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
 
@@ -41,11 +39,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(LOGIN_ENDPOINT).permitAll()
-                .antMatchers(ADMIN_ENDPOINT).hasRole(ADMIN)
-                .anyRequest().authenticated()
+                    .antMatchers(LOGIN_ENDPOINT, SIGNUP_ENDPOINT).permitAll()
+                    .antMatchers(HttpMethod.GET, GIFT_CERTIFICATE_ENDPOINT, TAGS_ENDPOINT).permitAll()
+                    .antMatchers(ORDERS_ENDPOINT, USERS_ENDPOINT).hasRole(USER)
+                    .antMatchers("/**").hasRole(ADMIN)
+                    .anyRequest().authenticated()
                 .and()
-                .apply(new JwtConfigurer(jwtTokenProvider));
+                    .apply(new JwtConfigurer(jwtTokenProvider));
     }
 
 }

@@ -71,13 +71,13 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.mapToEntity(userDto);
         if (userRepository.findByField("login", user.getLogin()).isPresent())
             throw new DuplicateException("user.exist");
-        Role roleUser = roleRepository.findByName("ROLE_USER");
+        Role roleUser = roleRepository.findByName("USER").orElseThrow(() -> new NoSuchEntityException("role.not.found"));
         Set<Role> userRoles = new HashSet<>();
         userRoles.add(roleUser);
 
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        userDto.setStatus(Status.ACTIVE);
-        userDto.setRoles(userRoles);
+        user.setStatus(Status.ACTIVE);
+        user.setRoles(userRoles);
 
         return userMapper.mapToDto(userRepository.create(user));
     }
