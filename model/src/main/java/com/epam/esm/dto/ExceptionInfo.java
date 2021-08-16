@@ -1,4 +1,4 @@
-package com.epam.esm.exception;
+package com.epam.esm.dto;
 
 public class ExceptionInfo {
     private final String errorMessage;

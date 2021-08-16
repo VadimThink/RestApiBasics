@@ -58,7 +58,7 @@ public class GiftCertificateController {
     @ResponseStatus(HttpStatus.CREATED)
     public GiftCertificateDto create(
             @RequestBody @Valid GiftCertificateDto giftCertificateDto,
-            BindingResult bindingResult) throws DuplicateException, NoSuchEntityException {
+            BindingResult bindingResult) throws NoSuchEntityException {
         ValidationExceptionChecker.checkDtoValidation(bindingResult);
         GiftCertificateDto newGiftCertificateDto = giftCertificateService.create(giftCertificateDto);
         giftCertificateLinkProvider.provideLinks(newGiftCertificateDto);

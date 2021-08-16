@@ -27,6 +27,9 @@ public class ValidationExceptionChecker {
             if (bindingResult.hasFieldErrors("certificateId")) {
                 exceptionMessage ="validation.id";
             }
+            if (bindingResult.hasFieldErrors("login")){
+                exceptionMessage ="validation.login";
+            }
             throw new ValidationException(exceptionMessage);
         }
     }

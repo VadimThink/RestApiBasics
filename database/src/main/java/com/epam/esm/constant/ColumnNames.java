@@ -10,4 +10,5 @@ public final class ColumnNames {
     public static final String LAST_UPDATE_DATE_COLUMN_LABEL = "last_update_date";
     public static final String TAG_ID_COLUMN_LABEL = "tag_id";
     public static final String CERTIFICATE_ID = "certificate_id";
+    public static final String LOGIN_COLUMN_LABEL = "login";
 }

@@ -4,7 +4,6 @@ import com.epam.esm.constant.Status;
 import com.epam.esm.entity.Role;
 import org.springframework.hateoas.RepresentationModel;
 
-import javax.persistence.PrePersist;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -12,7 +11,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-public class UserDto extends RepresentationModel<UserDto> {
+public class UserResponseDto extends RepresentationModel<UserResponseDto> {
 
     private long id;
 
@@ -27,10 +26,6 @@ public class UserDto extends RepresentationModel<UserDto> {
     private String login;
 
     @NotEmpty
-    @Size(min = 1, max = 20)
-    private String password;
-
-    @NotEmpty
     @Email
     private String email;
 
@@ -38,10 +33,10 @@ public class UserDto extends RepresentationModel<UserDto> {
 
     private Set<Role> roles = new HashSet<>();
 
-    public UserDto() {
+    public UserResponseDto() {
     }
 
-    public UserDto(long id, String name, BigDecimal spentMoney) {
+    public UserResponseDto(long id, String name, BigDecimal spentMoney) {
         this.id = id;
         this.name = name;
         this.spentMoney = spentMoney;
@@ -79,14 +74,6 @@ public class UserDto extends RepresentationModel<UserDto> {
         this.login = login;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -117,16 +104,15 @@ public class UserDto extends RepresentationModel<UserDto> {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
 
-        UserDto userDto = (UserDto) o;
+        UserResponseDto that = (UserResponseDto) o;
 
-        if (id != userDto.id) return false;
-        if (name != null ? !name.equals(userDto.name) : userDto.name != null) return false;
-        if (spentMoney != null ? !spentMoney.equals(userDto.spentMoney) : userDto.spentMoney != null) return false;
-        if (login != null ? !login.equals(userDto.login) : userDto.login != null) return false;
-        if (password != null ? !password.equals(userDto.password) : userDto.password != null) return false;
-        if (email != null ? !email.equals(userDto.email) : userDto.email != null) return false;
-        if (status != userDto.status) return false;
-        return roles != null ? roles.equals(userDto.roles) : userDto.roles == null;
+        if (id != that.id) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (spentMoney != null ? !spentMoney.equals(that.spentMoney) : that.spentMoney != null) return false;
+        if (login != null ? !login.equals(that.login) : that.login != null) return false;
+        if (email != null ? !email.equals(that.email) : that.email != null) return false;
+        if (status != that.status) return false;
+        return roles != null ? roles.equals(that.roles) : that.roles == null;
     }
 
     @Override
@@ -136,7 +122,6 @@ public class UserDto extends RepresentationModel<UserDto> {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (spentMoney != null ? spentMoney.hashCode() : 0);
         result = 31 * result + (login != null ? login.hashCode() : 0);
-        result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
         result = 31 * result + (roles != null ? roles.hashCode() : 0);
@@ -145,7 +130,7 @@ public class UserDto extends RepresentationModel<UserDto> {
 
     @Override
     public String toString() {
-        return "UserDto{" +
+        return "UserResponseDto{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", spentMoney=" + spentMoney +
