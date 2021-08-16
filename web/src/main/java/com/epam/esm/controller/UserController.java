@@ -2,6 +2,7 @@ package com.epam.esm.controller;
 
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.UserResponseDto;
 import com.epam.esm.exception.DuplicateException;
 import com.epam.esm.exception.InvalidParametersException;
 import com.epam.esm.exception.NoSuchEntityException;
@@ -48,22 +49,22 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping("/signup")
-    public UserDto signup(@RequestBody @Valid UserDto userDto, BindingResult bindingResult)
+    public UserResponseDto signup(@RequestBody @Valid UserDto userDto, BindingResult bindingResult)
             throws DuplicateException {
         ValidationExceptionChecker.checkDtoValidation(bindingResult);
-        UserDto newUserDto = userService.register(userDto);
+        UserResponseDto newUserDto = userService.register(userDto);
         userLinkProvider.provideLinks(newUserDto);
         return newUserDto;
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<UserDto> getAll(
+    public List<UserResponseDto> getAll(
             @RequestParam(value = PAGE, required = false, defaultValue = DEFAULT_PAGE) int page,
             @RequestParam(value = SIZE, required = false, defaultValue = DEFAULT_SIZE) int size)
             throws InvalidParametersException {
         RequestParametersValidator.validatePaginationParams(page, size);
-        List<UserDto> userDtoList = userService.getAll(page, size);
+        List<UserResponseDto> userDtoList = userService.getAll(page, size);
         return userDtoList.stream()
                 .peek(userLinkProvider::provideLinks)
                 .collect(Collectors.toList());
@@ -71,10 +72,10 @@ public class UserController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UserDto getById(HttpServletRequest httpServletRequest, @PathVariable long id) throws NoSuchEntityException {
+    public UserResponseDto getById(HttpServletRequest httpServletRequest, @PathVariable long id) throws NoSuchEntityException {
         RequestParametersValidator.validateId(id);
         userAccessService.checkAccess(httpServletRequest, id);
-        UserDto userDto = userService.getById(id);
+        UserResponseDto userDto = userService.getById(id);
         userLinkProvider.provideLinks(userDto);
         return userDto;
     }

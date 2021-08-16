@@ -3,6 +3,7 @@ package com.epam.esm.controller;
 import com.epam.esm.dto.AuthenticationRequestDto;
 import com.epam.esm.dto.AuthenticationResponseDto;
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.UserResponseDto;
 import com.epam.esm.logic.UserService;
 import com.epam.esm.security.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class AuthenticationController {
     public AuthenticationResponseDto login(@RequestBody AuthenticationRequestDto requestDto){
         String login = requestDto.getLogin();
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login, requestDto.getPassword()));
-        UserDto userDto = userService.getByLogin(login);
+        UserResponseDto userDto = userService.getByLogin(login);
         String token = jwtTokenProvider.createToken(userDto);
         return new AuthenticationResponseDto(login, token);
     }

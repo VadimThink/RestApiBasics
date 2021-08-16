@@ -1,6 +1,7 @@
 package com.epam.esm.security.jwt;
 
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.UserResponseDto;
 import com.epam.esm.entity.Role;
 import com.epam.esm.exception.JwtAuthenticationException;
 import io.jsonwebtoken.*;
@@ -39,7 +40,7 @@ public class JwtTokenProvider {
         secret = Base64.getEncoder().encodeToString(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String createToken(UserDto userDto){
+    public String createToken(UserResponseDto userDto){
         Claims claims = Jwts.claims().setSubject(userDto.getLogin());
         claims.put("roles", getRoleNames(userDto.getRoles()));
 

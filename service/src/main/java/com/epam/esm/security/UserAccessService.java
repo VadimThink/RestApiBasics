@@ -1,6 +1,7 @@
 package com.epam.esm.security;
 
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.UserResponseDto;
 import com.epam.esm.logic.UserService;
 import com.epam.esm.security.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +26,7 @@ public class UserAccessService {
         String token = jwtTokenProvider.resolveToken(httpServletRequest);
         String login = jwtTokenProvider.getLogin(token);
         List<String> roles = jwtTokenProvider.getRoles(token);
-        UserDto userDto = userService.getByLogin(login);
+        UserResponseDto userDto = userService.getByLogin(login);
         if ((userDto.getId() != userId) && !roles.contains("ROLE_ADMIN")) {
             throw new AuthorizationServiceException("exception.no.access");
         }

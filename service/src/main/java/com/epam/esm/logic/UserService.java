@@ -1,10 +1,9 @@
 package com.epam.esm.logic;
 
 import com.epam.esm.dto.UserDto;
-import com.epam.esm.exception.DuplicateException;
+import com.epam.esm.dto.UserResponseDto;
 import com.epam.esm.exception.InvalidParametersException;
 import com.epam.esm.exception.NoSuchEntityException;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -19,7 +18,7 @@ public interface UserService {
      * @return List of all Tags
      * @throws InvalidParametersException when page or size params are invalid
      */
-    List<UserDto> getAll(int page, int size) throws InvalidParametersException;
+    List<UserResponseDto> getAll(int page, int size) throws InvalidParametersException;
 
     /**
      * Gets User by id.
@@ -28,13 +27,13 @@ public interface UserService {
      * @return founded User
      * @throws NoSuchEntityException when User is not found
      */
-    UserDto getById(long id) throws NoSuchEntityException;
+    UserResponseDto getById(long id) throws NoSuchEntityException;
 
-    UserDto getByLogin(String login) throws NoSuchEntityException;
+    UserResponseDto getByLogin(String login) throws NoSuchEntityException;
 
     void addSpentMoney(long id, BigDecimal addedValue) throws NoSuchEntityException;
 
-    UserDto register(UserDto userDto);
+    UserResponseDto register(UserDto userDto);
 
     void delete(long id);
 
